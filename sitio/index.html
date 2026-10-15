@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrestoPronto | Administrador del sitio</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2223%22%20fill%3D%22%23E53935%22/%3E%3Cg%20transform%3D%22translate%2850%2050%29%20scale%280.92%29%20rotate%2845%29%20translate%28-50%20-53%29%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M38.5%2050%20Q29%2056%2028%2072%20L38.5%2067%20Z%20M61.5%2050%20Q71%2056%2072%2072%20L61.5%2067%20Z%22/%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M50%2012%20C64%2022%2065%2044%2062%2069%20L38%2069%20C35%2044%2036%2022%2050%2012%20Z%22/%3E%3Cg%20fill%3D%22%23E53935%22%3E%3Crect%20x%3D%2244.8%22%20y%3D%2225%22%20width%3D%222.6%22%20height%3D%2213%22%20rx%3D%221.3%22/%3E%3Crect%20x%3D%2248.7%22%20y%3D%2225%22%20width%3D%222.6%22%20height%3D%2213%22%20rx%3D%221.3%22/%3E%3Crect%20x%3D%2252.6%22%20y%3D%2225%22%20width%3D%222.6%22%20height%3D%2213%22%20rx%3D%221.3%22/%3E%3Cpath%20d%3D%22M44.8%2035.5%20H55.2%20V39.5%20Q55.2%2044.5%2051.8%2045.5%20H48.2%20Q44.8%2044.5%2044.8%2039.5%20Z%22/%3E%3Crect%20x%3D%2248.2%22%20y%3D%2244%22%20width%3D%223.6%22%20height%3D%2219%22%20rx%3D%221.8%22/%3E%3C/g%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M43.5%2073%20H56.5%20Q56%2082%2050%2091%20Q44%2082%2043.5%2073%20Z%22/%3E%3Cg%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%223.4%22%20stroke-linecap%3D%22round%22%3E%3Cline%20x1%3D%2235%22%20y1%3D%2278%22%20x2%3D%2235%22%20y2%3D%2286%22/%3E%3Cline%20x1%3D%2265%22%20y1%3D%2278%22%20x2%3D%2265%22%20y2%3D%2284%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+<!--
+  PrestoPronto, versión 1.2
+  Archivo: sitio/index.html (Administrador del sitio del negocio; usa ../api.js)
+  Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="../api.js"></script>
+<style>
+:root{
+  --bg:#F5F4F0; --panel:#FFFFFF; --ink:#1B1B1B; --muted:#6B6B66; --line:#E3E1DA;
+  --acc:#E53935; --acc-ink:#FFFFFF; --acc-soft:#FDECEA; --dark:#1B1B1B; --ok:#1E7A46; --ok-bg:#E6F4EC;
+  --warn:#8A6100; --warn-bg:#FFF4D1; --err:#B42318; --err-bg:#FDECEA; --chip:#EFEDE6;
+  --radius:12px; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:Poppins,Inter,sans-serif;font-weight:700;letter-spacing:0;margin:0}
+[hidden]{display:none!important}
+
+/* ---------- Login ---------- */
+.login{min-height:100vh;display:grid;place-items:center;padding:16px;background:var(--dark)}
+.login .card{width:100%;max-width:420px;background:var(--panel);border-radius:16px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.login h1{font-size:28px;margin-bottom:4px}
+.login p{color:var(--muted);margin:0 0 20px}
+.logo{display:block;height:auto}
+.login .logo{width:240px;color:var(--ink);margin-bottom:18px}
+.top .logo{width:170px;color:#fff;flex:none}
+.top .ctx{flex:1;min-width:120px;color:#BDBDB6;font-size:13px;font-weight:500;border-left:1px solid #3A3A3A;padding-left:12px}
+@media(max-width:520px){.top .logo{width:140px}.top .ctx{border:0;padding-left:0;flex-basis:100%;order:3}}
+
+/* ---------- Estructura ---------- */
+.top{background:var(--dark);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+.top select{background:#2A2A2A;border:1px solid #3A3A3A;color:#fff;border-radius:8px;padding:6px 10px}
+.banda{padding:10px 16px;font-weight:600;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.banda.soporte{background:#2F6FEB;color:#fff}
+.banda.soporte button{margin-left:auto;background:#fff;color:#1B3F8F;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer}
+.banda.suspendido{background:var(--warn-bg);color:var(--warn);border-bottom:1px solid #F0D58A}
+.top .quien{color:#BDBDB6;font-size:13px}
+@media(max-width:520px){.top .quien{display:none}}
+body.solo-lectura .edita{display:none!important}
+.top .btn-link{color:#BDBDB6;background:none;border:0;cursor:pointer;padding:6px;margin-left:auto}
+.tabs{display:flex;gap:4px;padding:0 16px;background:var(--dark);overflow-x:auto}
+.tabs button{background:none;border:0;color:#BDBDB6;padding:12px 14px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-weight:600}
+.tabs button.on{color:#fff;border-color:var(--acc)}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 80px}
+
+/* ---------- Componentes ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{border-color:#C9C6BB}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.btn.pri:hover{filter:brightness(.96)}
+.btn.dark{background:var(--dark);border-color:var(--dark);color:#fff}
+.btn.danger{color:var(--err)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--muted)}
+input[type=text],input[type=number],input[type=password],input[type=url],input[type=search],select,textarea{
+  width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff;color:var(--ink);font-weight:400}
+textarea{min-height:80px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:0;border-color:var(--acc)}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:720px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;color:#4A4A45}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.no{background:var(--err-bg);color:var(--err)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.mt{margin-top:16px}
+.aviso{border-radius:10px;padding:10px 12px;font-size:14px}
+.aviso.ok{background:var(--ok-bg);color:var(--ok)}
+.aviso.err{background:var(--err-bg);color:var(--err)}
+.aviso.warn{background:var(--warn-bg);color:var(--warn)}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+@media(max-width:720px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.kpi b{display:block;font-family:Poppins;font-size:26px;font-weight:600}
+.kpi span{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+
+/* ---------- Productos ---------- */
+.toolbar{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;margin-bottom:12px;align-items:end}
+@media(max-width:900px){.toolbar{grid-template-columns:1fr 1fr}}
+.lista{display:flex;flex-direction:column;gap:8px}
+.prod{display:grid;grid-template-columns:56px 52px 1fr 110px 110px 80px 92px;gap:12px;align-items:center;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;padding:8px 12px;cursor:pointer}
+.prod:hover{border-color:#C9C6BB}
+.prod.off{opacity:.6}
+.prod .foto{width:56px;height:56px;border-radius:10px;background:var(--chip) center/cover no-repeat;display:grid;place-items:center;color:#A9A69C;font-size:11px}
+.prod .num{font-family:Poppins;font-size:16px;background:var(--dark);color:#fff;border-radius:8px;text-align:center;padding:4px 0}
+.prod .nom b{display:block}
+.prod .nom small{color:var(--muted);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.prod .val{text-align:right;font-variant-numeric:tabular-nums}
+.prod .val small{display:block;color:var(--muted);font-size:11px}
+.cab{display:grid;grid-template-columns:56px 52px 1fr 110px 110px 80px 92px;gap:12px;padding:0 12px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.cab .r{text-align:right}
+@media(max-width:820px){
+  .cab{display:none}
+  .prod{grid-template-columns:56px 1fr auto;grid-template-areas:"f n d" "f p p"}
+  .prod .num{display:none}
+  .prod .foto{grid-area:f}
+  .prod .nom{grid-area:n}
+  .prod .sw{grid-area:d}
+  .prod .val{display:none}
+  .prod .mov{grid-area:p;display:flex!important;gap:10px;font-size:13px;color:var(--muted)}
+}
+.prod .mov{display:none}
+.sw{position:relative;width:46px;height:26px;border-radius:999px;background:#D0CEC6;border:0;cursor:pointer;justify-self:end}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s}
+.sw.on{background:var(--ok)}
+.sw.on::after{left:23px}
+
+/* ---------- Diálogo ---------- */
+dialog{border:0;border-radius:16px;padding:0;width:min(760px,96vw);max-height:92vh;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.dlg-h{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;position:sticky;top:0;background:#fff;z-index:2}
+.dlg-h h2{font-size:20px;flex:1}
+.dlg-b{padding:20px;overflow:auto}
+.dlg-f{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;position:sticky;bottom:0;background:#fff}
+.foto-edit{display:flex;gap:14px;align-items:center}
+.foto-edit .prev{width:110px;height:110px;border-radius:12px;background:var(--chip) center/cover no-repeat;flex:none;display:grid;place-items:center;color:#A9A69C;font-size:12px}
+.margen{font-family:Poppins;font-size:20px}
+
+/* ---------- Categorías ---------- */
+.cat{margin-bottom:12px}
+.cat-h{display:grid;grid-template-columns:70px 1fr 80px auto;gap:8px;align-items:center}
+.subs{margin:10px 0 0 24px;display:flex;flex-direction:column;gap:6px}
+.sub{display:grid;grid-template-columns:70px 1fr 80px 70px auto;gap:8px;align-items:center}
+@media(max-width:720px){.cat-h,.sub{grid-template-columns:1fr 1fr}.subs{margin-left:8px}}
+.codigo{font-family:Poppins;font-size:15px;background:var(--chip);border-radius:8px;padding:6px 8px;text-align:center}
+
+/* ---------- Carga masiva ---------- */
+.drop{border:2px dashed #C9C6BB;border-radius:16px;padding:32px 16px;text-align:center;background:#FBFAF7;cursor:pointer}
+.drop.over{border-color:var(--acc);background:var(--acc-soft)}
+.drop b{font-family:Poppins;font-size:20px;display:block;margin-bottom:6px}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th,table.t td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.t th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:10px}
+.pasos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+@media(max-width:720px){.pasos{grid-template-columns:1fr}}
+.paso{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.paso b{font-family:Poppins;font-size:16px}
+.paso.on{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.paso.hecho{opacity:.65}
+
+/* ---------- Toast y carga ---------- */
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:12px 16px;border-radius:12px;
+  max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:100;font-size:14px}
+#toast.err{background:var(--err)}
+#cargando{position:fixed;inset:0;background:rgba(255,255,255,.6);display:grid;place-items:center;z-index:90}
+.spin{width:38px;height:38px;border:4px solid #E3E1DA;border-top-color:var(--acc);border-radius:50%;animation:g 1s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+.vacio{text-align:center;padding:40px 16px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<section id="v-login" class="login" hidden>
+  <div class="card">
+    <svg class="logo" viewBox="0 0 487 100" role="img" aria-label="PrestoPronto"><rect width="100" height="100" rx="23" fill="#E53935"/><g transform="translate(50 50) scale(0.9) rotate(45) translate(-50 -53)"><path fill="#FFFFFF" d="M38.5 50 Q29 56 28 72 L38.5 67 Z M61.5 50 Q71 56 72 72 L61.5 67 Z"/><path fill="#FFFFFF" d="M50 12 C64 22 65 44 62 69 L38 69 C35 44 36 22 50 12 Z"/><g fill="#E53935"><rect x="44.8" y="25" width="2.6" height="13" rx="1.3"/><rect x="48.7" y="25" width="2.6" height="13" rx="1.3"/><rect x="52.6" y="25" width="2.6" height="13" rx="1.3"/><path d="M44.8 35.5 H55.2 V39.5 Q55.2 44.5 51.8 45.5 H48.2 Q44.8 44.5 44.8 39.5 Z"/><rect x="48.2" y="44" width="3.6" height="19" rx="1.8"/></g><path fill="#FFFFFF" d="M43.5 73 H56.5 Q56 82 50 91 Q44 82 43.5 73 Z"/><g stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"><line x1="35" y1="78" x2="35" y2="86"/><line x1="65" y1="78" x2="65" y2="84"/></g></g><path fill="currentColor" d="M140.7 56.2H135.5V69.0H125.0V31.2H140.7Q145.2 31.2 148.4 32.8Q151.6 34.4 153.2 37.2Q154.8 40.1 154.8 43.8Q154.8 47.2 153.2 50.0Q151.6 52.8 148.5 54.5Q145.3 56.2 140.7 56.2ZM144.1 43.8Q144.1 39.6 139.6 39.6H135.5V47.8H139.6Q144.1 47.8 144.1 43.8Z M178.8 38.6V49.8H175.9Q172.4 49.8 170.8 51.2Q169.1 52.5 169.1 55.8V69.0H158.6V38.9H169.1V44.2Q170.9 41.6 173.4 40.1Q175.9 38.6 178.8 38.6Z M210.7 56.0H190.8Q191.0 58.5 192.2 59.7Q193.4 60.9 195.3 60.9Q197.9 60.9 199.0 58.6H210.2Q209.5 61.7 207.5 64.1Q205.5 66.5 202.5 67.9Q199.4 69.3 195.7 69.3Q191.3 69.3 187.8 67.4Q184.3 65.6 182.4 62.1Q180.4 58.6 180.4 53.9Q180.4 49.2 182.4 45.7Q184.3 42.3 187.7 40.4Q191.2 38.5 195.7 38.5Q200.1 38.5 203.6 40.3Q207.0 42.2 208.9 45.6Q210.9 49.0 210.9 53.6Q210.9 54.8 210.7 56.0ZM200.1 50.9Q200.1 49.0 198.9 47.9Q197.6 46.8 195.6 46.8Q193.7 46.8 192.5 47.9Q191.3 48.9 190.9 50.9Z M213.2 58.8H223.4Q223.6 60.3 224.7 61.1Q225.8 61.9 227.5 61.9Q228.8 61.9 229.5 61.3Q230.3 60.8 230.3 59.9Q230.3 58.8 229.0 58.3Q227.8 57.7 225.0 57.1Q221.7 56.5 219.6 55.7Q217.5 54.9 215.9 53.0Q214.3 51.2 214.3 48.1Q214.3 45.4 215.7 43.3Q217.2 41.1 220.0 39.8Q222.8 38.5 226.8 38.5Q232.7 38.5 236.1 41.4Q239.4 44.3 240.0 49.0H230.5Q230.2 47.6 229.2 46.8Q228.2 46.0 226.6 46.0Q225.3 46.0 224.6 46.5Q223.9 47.0 223.9 47.8Q223.9 48.9 225.2 49.5Q226.4 50.0 229.1 50.6Q232.4 51.3 234.6 52.2Q236.8 53.0 238.4 54.9Q240.0 56.8 240.0 60.1Q240.0 62.7 238.5 64.8Q237.0 66.9 234.2 68.1Q231.3 69.3 227.5 69.3Q223.5 69.3 220.3 68.0Q217.1 66.6 215.2 64.2Q213.4 61.8 213.2 58.8Z M262.5 60.0V69.0H257.9Q246.4 69.0 246.4 57.5V47.6H242.7V38.9H246.4V31.6H257.0V38.9H262.4V47.6H257.0V57.7Q257.0 58.9 257.5 59.5Q258.1 60.0 259.4 60.0Z M265.2 53.9Q265.2 49.2 267.2 45.7Q269.3 42.3 272.9 40.4Q276.4 38.5 280.9 38.5Q285.4 38.5 289.0 40.4Q292.5 42.3 294.6 45.7Q296.7 49.2 296.7 53.9Q296.7 58.6 294.6 62.1Q292.5 65.6 289.0 67.4Q285.4 69.3 280.9 69.3Q276.4 69.3 272.8 67.4Q269.2 65.6 267.2 62.1Q265.2 58.6 265.2 53.9ZM286.0 53.9Q286.0 50.8 284.5 49.2Q283.1 47.6 280.9 47.6Q278.8 47.6 277.3 49.2Q275.9 50.8 275.9 53.9Q275.9 57.0 277.3 58.6Q278.7 60.2 280.9 60.2Q283.1 60.2 284.5 58.6Q286.0 56.9 286.0 53.9Z"/><path fill="#E53935" d="M316.2 56.2H311.0V69.0H300.5V31.2H316.2Q320.8 31.2 324.0 32.8Q327.2 34.4 328.8 37.2Q330.4 40.1 330.4 43.8Q330.4 47.2 328.8 50.0Q327.2 52.8 324.0 54.5Q320.8 56.2 316.2 56.2ZM319.7 43.8Q319.7 39.6 315.2 39.6H311.0V47.8H315.2Q319.7 47.8 319.7 43.8Z M354.4 38.6V49.8H351.5Q348.0 49.8 346.4 51.2Q344.7 52.5 344.7 55.8V69.0H334.2V38.9H344.7V44.2Q346.5 41.6 349.0 40.1Q351.5 38.6 354.4 38.6Z M356.0 53.9Q356.0 49.2 358.1 45.7Q360.1 42.3 363.7 40.4Q367.3 38.5 371.8 38.5Q376.3 38.5 379.8 40.4Q383.4 42.3 385.5 45.7Q387.5 49.2 387.5 53.9Q387.5 58.6 385.5 62.1Q383.4 65.6 379.8 67.4Q376.2 69.3 371.7 69.3Q367.2 69.3 363.6 67.4Q360.1 65.6 358.0 62.1Q356.0 58.6 356.0 53.9ZM376.9 53.9Q376.9 50.8 375.4 49.2Q373.9 47.6 371.8 47.6Q369.6 47.6 368.2 49.2Q366.7 50.8 366.7 53.9Q366.7 57.0 368.1 58.6Q369.5 60.2 371.7 60.2Q373.9 60.2 375.4 58.6Q376.9 56.9 376.9 53.9Z M422.4 51.4V69.0H411.9V52.8Q411.9 50.2 410.5 48.8Q409.2 47.3 406.9 47.3Q404.6 47.3 403.2 48.8Q401.9 50.2 401.9 52.8V69.0H391.4V38.9H401.9V43.2Q403.3 41.1 405.6 39.9Q408.0 38.6 411.1 38.6Q416.2 38.6 419.3 42.1Q422.4 45.5 422.4 51.4Z M445.5 60.0V69.0H440.9Q429.4 69.0 429.4 57.5V47.6H425.7V38.9H429.4V31.6H439.9V38.9H445.4V47.6H439.9V57.7Q439.9 58.9 440.5 59.5Q441.1 60.0 442.4 60.0Z M448.1 53.9Q448.1 49.2 450.2 45.7Q452.3 42.3 455.8 40.4Q459.4 38.5 463.9 38.5Q468.4 38.5 472.0 40.4Q475.5 42.3 477.6 45.7Q479.7 49.2 479.7 53.9Q479.7 58.6 477.6 62.1Q475.5 65.6 471.9 67.4Q468.3 69.3 463.8 69.3Q459.3 69.3 455.8 67.4Q452.2 65.6 450.2 62.1Q448.1 58.6 448.1 53.9ZM469.0 53.9Q469.0 50.8 467.5 49.2Q466.0 47.6 463.9 47.6Q461.8 47.6 460.3 49.2Q458.9 50.8 458.9 53.9Q458.9 57.0 460.3 58.6Q461.6 60.2 463.8 60.2Q466.0 60.2 467.5 58.6Q469.0 56.9 469.0 53.9Z"/></svg>
+    <div id="f-ingreso">
+      <h1 style="font-size:22px">Administrador del sitio</h1>
+      <p>Ingresa con el correo y la clave de tu negocio.</p>
+      <form class="grid" id="frm-ingreso" novalidate>
+        <label class="f">Correo<input type="email" id="l-email" autocomplete="username" required></label>
+        <label class="f">Clave<input type="password" id="l-clave" autocomplete="current-password" required></label>
+        <div id="l-msg"></div>
+        <button class="btn pri" type="submit">Ingresar</button>
+      </form>
+    </div>
+    <div id="f-cambio" hidden>
+      <h1 style="font-size:22px">Crea tu clave</h1>
+      <p>Por seguridad, reemplaza la clave temporal por una tuya: al menos 8 caracteres, con letras y números.</p>
+      <form class="grid" id="frm-cambio" novalidate>
+        <label class="f">Clave temporal<input type="password" id="c-actual" autocomplete="current-password" required></label>
+        <label class="f">Nueva clave<input type="password" id="c-nueva" autocomplete="new-password" required></label>
+        <label class="f">Repite la nueva clave<input type="password" id="c-nueva2" autocomplete="new-password" required></label>
+        <div id="c-msg"></div>
+        <button class="btn pri" type="submit">Guardar y entrar</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APLICACIÓN ================= -->
+<div id="v-app" hidden>
+  <header class="top">
+    <svg class="logo" viewBox="0 0 487 100" role="img" aria-label="PrestoPronto"><rect width="100" height="100" rx="23" fill="#E53935"/><g transform="translate(50 50) scale(0.9) rotate(45) translate(-50 -53)"><path fill="#FFFFFF" d="M38.5 50 Q29 56 28 72 L38.5 67 Z M61.5 50 Q71 56 72 72 L61.5 67 Z"/><path fill="#FFFFFF" d="M50 12 C64 22 65 44 62 69 L38 69 C35 44 36 22 50 12 Z"/><g fill="#E53935"><rect x="44.8" y="25" width="2.6" height="13" rx="1.3"/><rect x="48.7" y="25" width="2.6" height="13" rx="1.3"/><rect x="52.6" y="25" width="2.6" height="13" rx="1.3"/><path d="M44.8 35.5 H55.2 V39.5 Q55.2 44.5 51.8 45.5 H48.2 Q44.8 44.5 44.8 39.5 Z"/><rect x="48.2" y="44" width="3.6" height="19" rx="1.8"/></g><path fill="#FFFFFF" d="M43.5 73 H56.5 Q56 82 50 91 Q44 82 43.5 73 Z"/><g stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"><line x1="35" y1="78" x2="35" y2="86"/><line x1="65" y1="78" x2="65" y2="84"/></g></g><path fill="currentColor" d="M140.7 56.2H135.5V69.0H125.0V31.2H140.7Q145.2 31.2 148.4 32.8Q151.6 34.4 153.2 37.2Q154.8 40.1 154.8 43.8Q154.8 47.2 153.2 50.0Q151.6 52.8 148.5 54.5Q145.3 56.2 140.7 56.2ZM144.1 43.8Q144.1 39.6 139.6 39.6H135.5V47.8H139.6Q144.1 47.8 144.1 43.8Z M178.8 38.6V49.8H175.9Q172.4 49.8 170.8 51.2Q169.1 52.5 169.1 55.8V69.0H158.6V38.9H169.1V44.2Q170.9 41.6 173.4 40.1Q175.9 38.6 178.8 38.6Z M210.7 56.0H190.8Q191.0 58.5 192.2 59.7Q193.4 60.9 195.3 60.9Q197.9 60.9 199.0 58.6H210.2Q209.5 61.7 207.5 64.1Q205.5 66.5 202.5 67.9Q199.4 69.3 195.7 69.3Q191.3 69.3 187.8 67.4Q184.3 65.6 182.4 62.1Q180.4 58.6 180.4 53.9Q180.4 49.2 182.4 45.7Q184.3 42.3 187.7 40.4Q191.2 38.5 195.7 38.5Q200.1 38.5 203.6 40.3Q207.0 42.2 208.9 45.6Q210.9 49.0 210.9 53.6Q210.9 54.8 210.7 56.0ZM200.1 50.9Q200.1 49.0 198.9 47.9Q197.6 46.8 195.6 46.8Q193.7 46.8 192.5 47.9Q191.3 48.9 190.9 50.9Z M213.2 58.8H223.4Q223.6 60.3 224.7 61.1Q225.8 61.9 227.5 61.9Q228.8 61.9 229.5 61.3Q230.3 60.8 230.3 59.9Q230.3 58.8 229.0 58.3Q227.8 57.7 225.0 57.1Q221.7 56.5 219.6 55.7Q217.5 54.9 215.9 53.0Q214.3 51.2 214.3 48.1Q214.3 45.4 215.7 43.3Q217.2 41.1 220.0 39.8Q222.8 38.5 226.8 38.5Q232.7 38.5 236.1 41.4Q239.4 44.3 240.0 49.0H230.5Q230.2 47.6 229.2 46.8Q228.2 46.0 226.6 46.0Q225.3 46.0 224.6 46.5Q223.9 47.0 223.9 47.8Q223.9 48.9 225.2 49.5Q226.4 50.0 229.1 50.6Q232.4 51.3 234.6 52.2Q236.8 53.0 238.4 54.9Q240.0 56.8 240.0 60.1Q240.0 62.7 238.5 64.8Q237.0 66.9 234.2 68.1Q231.3 69.3 227.5 69.3Q223.5 69.3 220.3 68.0Q217.1 66.6 215.2 64.2Q213.4 61.8 213.2 58.8Z M262.5 60.0V69.0H257.9Q246.4 69.0 246.4 57.5V47.6H242.7V38.9H246.4V31.6H257.0V38.9H262.4V47.6H257.0V57.7Q257.0 58.9 257.5 59.5Q258.1 60.0 259.4 60.0Z M265.2 53.9Q265.2 49.2 267.2 45.7Q269.3 42.3 272.9 40.4Q276.4 38.5 280.9 38.5Q285.4 38.5 289.0 40.4Q292.5 42.3 294.6 45.7Q296.7 49.2 296.7 53.9Q296.7 58.6 294.6 62.1Q292.5 65.6 289.0 67.4Q285.4 69.3 280.9 69.3Q276.4 69.3 272.8 67.4Q269.2 65.6 267.2 62.1Q265.2 58.6 265.2 53.9ZM286.0 53.9Q286.0 50.8 284.5 49.2Q283.1 47.6 280.9 47.6Q278.8 47.6 277.3 49.2Q275.9 50.8 275.9 53.9Q275.9 57.0 277.3 58.6Q278.7 60.2 280.9 60.2Q283.1 60.2 284.5 58.6Q286.0 56.9 286.0 53.9Z"/><path fill="#E53935" d="M316.2 56.2H311.0V69.0H300.5V31.2H316.2Q320.8 31.2 324.0 32.8Q327.2 34.4 328.8 37.2Q330.4 40.1 330.4 43.8Q330.4 47.2 328.8 50.0Q327.2 52.8 324.0 54.5Q320.8 56.2 316.2 56.2ZM319.7 43.8Q319.7 39.6 315.2 39.6H311.0V47.8H315.2Q319.7 47.8 319.7 43.8Z M354.4 38.6V49.8H351.5Q348.0 49.8 346.4 51.2Q344.7 52.5 344.7 55.8V69.0H334.2V38.9H344.7V44.2Q346.5 41.6 349.0 40.1Q351.5 38.6 354.4 38.6Z M356.0 53.9Q356.0 49.2 358.1 45.7Q360.1 42.3 363.7 40.4Q367.3 38.5 371.8 38.5Q376.3 38.5 379.8 40.4Q383.4 42.3 385.5 45.7Q387.5 49.2 387.5 53.9Q387.5 58.6 385.5 62.1Q383.4 65.6 379.8 67.4Q376.2 69.3 371.7 69.3Q367.2 69.3 363.6 67.4Q360.1 65.6 358.0 62.1Q356.0 58.6 356.0 53.9ZM376.9 53.9Q376.9 50.8 375.4 49.2Q373.9 47.6 371.8 47.6Q369.6 47.6 368.2 49.2Q366.7 50.8 366.7 53.9Q366.7 57.0 368.1 58.6Q369.5 60.2 371.7 60.2Q373.9 60.2 375.4 58.6Q376.9 56.9 376.9 53.9Z M422.4 51.4V69.0H411.9V52.8Q411.9 50.2 410.5 48.8Q409.2 47.3 406.9 47.3Q404.6 47.3 403.2 48.8Q401.9 50.2 401.9 52.8V69.0H391.4V38.9H401.9V43.2Q403.3 41.1 405.6 39.9Q408.0 38.6 411.1 38.6Q416.2 38.6 419.3 42.1Q422.4 45.5 422.4 51.4Z M445.5 60.0V69.0H440.9Q429.4 69.0 429.4 57.5V47.6H425.7V38.9H429.4V31.6H439.9V38.9H445.4V47.6H439.9V57.7Q439.9 58.9 440.5 59.5Q441.1 60.0 442.4 60.0Z M448.1 53.9Q448.1 49.2 450.2 45.7Q452.3 42.3 455.8 40.4Q459.4 38.5 463.9 38.5Q468.4 38.5 472.0 40.4Q475.5 42.3 477.6 45.7Q479.7 49.2 479.7 53.9Q479.7 58.6 477.6 62.1Q475.5 65.6 471.9 67.4Q468.3 69.3 463.8 69.3Q459.3 69.3 455.8 67.4Q452.2 65.6 450.2 62.1Q448.1 58.6 448.1 53.9ZM469.0 53.9Q469.0 50.8 467.5 49.2Q466.0 47.6 463.9 47.6Q461.8 47.6 460.3 49.2Q458.9 50.8 458.9 53.9Q458.9 57.0 460.3 58.6Q461.6 60.2 463.8 60.2Q466.0 60.2 467.5 58.6Q469.0 56.9 469.0 53.9Z"/></svg>
+    <div class="ctx">Administrador del sitio<br><b id="t-negocio" style="color:#fff"></b></div>
+    <span class="quien" id="t-usuario"></span>
+    <button class="btn-link" id="b-salir">Salir</button>
+  </header>
+  <div class="banda soporte" id="b-soporte" hidden></div>
+  <div class="banda suspendido" id="b-suspendido" hidden></div>
+  <nav class="tabs">
+    <button data-tab="productos" class="on">Productos</button>
+    <button data-tab="categorias">Categorías</button>
+    <button data-tab="carga" class="edita">Carga masiva</button>
+  </nav>
+  <main>
+    <!-- Productos -->
+    <section id="tab-productos">
+      <div class="kpis" id="kpis"></div>
+      <div class="toolbar">
+        <label class="f">Buscar<input type="search" id="f-texto" placeholder="Nombre, número o ingrediente"></label>
+        <label class="f">Categoría<select id="f-cat"></select></label>
+        <label class="f">Subcategoría<select id="f-sub"></select></label>
+        <label class="f">Estado<select id="f-est">
+          <option value="">Todos</option><option value="SI">Disponibles</option><option value="NO">No disponibles</option>
+          <option value="SINCOSTO">Sin costo</option><option value="SINFOTO">Sin foto</option></select></label>
+        <div class="row">
+          <button class="btn pri edita" id="b-nuevo">Nuevo</button>
+          <button class="btn" id="b-exportar">Exportar Excel</button>
+        </div>
+      </div>
+      <div class="cab"><span></span><span>N°</span><span>Producto</span><span class="r">Precio</span><span class="r">Costo</span><span class="r">Margen</span><span class="r">Disponible</span></div>
+      <div class="lista" id="lista"></div>
+    </section>
+
+    <!-- Categorías -->
+    <section id="tab-categorias" hidden>
+      <div class="panel">
+        <div class="row"><h2>Categorías y subcategorías</h2><span class="spacer"></span>
+          <button class="btn pri edita" id="b-nueva-cat">Nueva categoría</button></div>
+        <p class="muted">Cada producto pertenece a una subcategoría y cada subcategoría a una categoría. Los informes usan ambos niveles.</p>
+        <div id="cats"></div>
+      </div>
+    </section>
+
+    <!-- Carga masiva -->
+    <section id="tab-carga" hidden>
+      <div class="pasos">
+        <div class="paso on" id="p1"><b>1. Elegir archivo</b><div class="muted">Excel con las hojas Categorias, Subcategorias, Productos y Variantes.</div></div>
+        <div class="paso" id="p2"><b>2. Validar</b><div class="muted">El sistema revisa todo sin guardar nada.</div></div>
+        <div class="paso" id="p3"><b>3. Confirmar</b><div class="muted">Se guarda solo si no hay errores.</div></div>
+      </div>
+      <div class="panel">
+        <div class="drop" id="drop">
+          <b>Arrastra aquí tu Excel o toca para elegirlo</b>
+          <span class="muted">Formatos .xlsx, .xls o .csv</span>
+          <input type="file" id="archivo" accept=".xlsx,.xls,.csv" hidden>
+        </div>
+        <div class="row mt">
+          <button class="btn sm" id="b-plantilla">Descargar plantilla vacía</button>
+          <button class="btn sm" id="b-exportar2">Descargar catálogo actual</button>
+          <span class="muted" style="font-size:13px">El catálogo actual sirve como plantilla: edítalo y vuelve a subirlo.</span>
+        </div>
+        <div id="imp-archivo" class="mt"></div>
+        <div id="imp-opciones" class="mt" hidden>
+          <label class="row" style="font-weight:600"><input type="checkbox" id="o-desactivar">
+            Desactivar los productos que no vengan en el archivo (no se borran, quedan como no disponibles)</label>
+          <p class="muted" style="font-size:13px;margin:8px 0 0">Las celdas vacías del Excel no borran datos ya guardados, por ejemplo un costo registrado antes.</p>
+          <div class="row mt">
+            <button class="btn dark" id="b-validar">Validar archivo</button>
+            <button class="btn pri" id="b-confirmar" disabled>Confirmar carga</button>
+            <button class="btn" id="b-limpiar">Elegir otro archivo</button>
+          </div>
+        </div>
+        <div id="imp-resultado" class="mt"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ================= DIÁLOGO PRODUCTO ================= -->
+<dialog id="dlg">
+  <form method="dialog" id="frm" autocomplete="off">
+    <div class="dlg-h"><h2 id="dlg-tit">Producto</h2><button class="btn sm" value="cancel" formnovalidate>Cerrar</button></div>
+    <div class="dlg-b">
+      <div class="foto-edit">
+        <div class="prev" id="d-prev">Sin foto</div>
+        <div class="grid">
+          <label class="btn sm edita" style="width:max-content">Subir foto<input type="file" id="d-foto" accept="image/*" hidden></label>
+          <span class="muted" style="font-size:13px">La foto se reduce automáticamente antes de subirla.</span>
+        </div>
+      </div>
+      <div class="grid g4 mt">
+        <label class="f">N° carta<input type="number" id="d-numero_carta" min="1" step="1" required></label>
+        <label class="f" style="grid-column:span 3">Nombre<input type="text" id="d-nombre" required></label>
+      </div>
+      <div class="grid g2 mt">
+        <label class="f">Categoría<select id="d-categoria"></select></label>
+        <label class="f">Subcategoría<select id="d-subcategoria_id" required></select></label>
+      </div>
+      <label class="f mt">Descripción<textarea id="d-descripcion"></textarea></label>
+      <div class="grid g4 mt">
+        <label class="f">Precio<input type="number" id="d-precio" min="0" step="1" required></label>
+        <label class="f">Costo<input type="number" id="d-costo" min="0" step="1" placeholder="Sin dato"></label>
+        <label class="f">Unidad<input type="text" id="d-unidad" placeholder="bocados, piezas"></label>
+        <label class="f">Cantidad<input type="number" id="d-cantidad" min="0" step="any"></label>
+      </div>
+      <div class="row mt"><span class="muted">Margen bruto:</span><span class="margen" id="d-margen">sin costo</span></div>
+      <div class="grid g4 mt">
+        <label class="f">Disponible<select id="d-disponible"><option>SI</option><option>NO</option></select></label>
+        <label class="f">Vegetariano<select id="d-vegetariano"><option value=""></option><option>SI</option><option>NO</option><option>NA</option></select></label>
+        <label class="f">Proteína<input type="text" id="d-proteina_principal" list="proteinas"></label>
+        <label class="f">Orden<input type="number" id="d-orden" step="1"></label>
+      </div>
+      <datalist id="proteinas"></datalist>
+      <label class="f mt">Observaciones internas<textarea id="d-observaciones" style="min-height:60px"></textarea></label>
+      <div class="mt" id="d-variantes"></div>
+    </div>
+    <div class="dlg-f">
+      <button class="btn danger edita" type="button" id="d-eliminar">Eliminar</button>
+      <span class="spacer"></span>
+      <button class="btn" value="cancel" formnovalidate>Cancelar</button>
+      <button class="btn pri edita" type="button" id="d-guardar">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" hidden></div>
+<div id="cargando" hidden><div class="spin"></div></div>
+
+<script>
+'use strict';
+/* =========================================================
+   Configuración y estado
+   ========================================================= */
+const COLUMNAS = {
+  Categorias: ['negocio_id','categoria_id','nombre','orden'],
+  Subcategorias: ['negocio_id','subcategoria_id','categoria_id','nombre','orden'],
+  Productos: ['producto_id','negocio_id','numero_carta','nombre','categoria_id','subcategoria_id','descripcion','unidad','cantidad',
+    'precio','costo','foto_url','disponible','vegetariano','proteina_principal','orden','observaciones'],
+  Variantes: ['variante_id','negocio_id','producto_id','grupo','opcion','delta_precio','disponible']
+};
+const HOJAS = Object.keys(COLUMNAS);
+const ALIAS = { numero:'numero_carta', nro:'numero_carta', n:'numero_carta', foto:'foto_url' };
+
+let PERFIL = null;       // sesión actual
+let S = null;            // catálogo cargado
+let IMP = null;          // archivo de importación leído
+let EDIT = null;         // producto en edición
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const CLP = new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0});
+
+
+/* =========================================================
+   Utilidades
+   ========================================================= */
+function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function vacio(v){ return v===null||v===undefined||String(v).trim()===''; }
+function num(v){ const n=Number(v); return vacio(v)||!isFinite(n)?null:n; }
+function pesos(v){ const n=num(v); return n===null?'':CLP.format(n); }
+function margen(p){ const pr=num(p.precio), c=num(p.costo); return pr&&c!==null? (pr-c)/pr : null; }
+function pct(x){ return x===null?'':(Math.round(x*1000)/10).toLocaleString('es-CL')+'%'; }
+function normKey(s){ return String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').trim().toLowerCase().replace(/[\s\-]+/g,'_'); }
+function porOrden(a,b){ return (Number(a.orden)||0)-(Number(b.orden)||0); }
+
+function toast(msg, error){
+  const t=$('#toast'); t.textContent=msg; t.className=error?'err':''; t.hidden=false;
+  clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true, error?6000:3000);
+}
+function cargando(on){ $('#cargando').hidden=!on; }
+
+/* Todas las llamadas al servidor pasan por api.js (objeto PP_API). */
+
+/* =========================================================
+   Inicio de sesión
+   ========================================================= */
+function verIngreso(msg){
+  PERFIL=null; S=null;
+  $('#v-app').hidden=true; $('#v-login').hidden=false; $('#f-ingreso').hidden=false; $('#f-cambio').hidden=true;
+  $('#l-clave').value='';
+  $('#l-msg').innerHTML = msg ? `<div class="aviso err">${esc(msg)}</div>` : '';
+}
+function verCambioClave(){
+  $('#v-app').hidden=true; $('#v-login').hidden=false; $('#f-ingreso').hidden=true; $('#f-cambio').hidden=false;
+  $('#c-msg').innerHTML=''; $('#c-actual').focus();
+}
+
+/** Con un perfil válido, abre el panel o pide cambiar la clave. */
+async function abrirPanel(perfil){
+  PERFIL = perfil;
+  if(perfil.debe_cambiar_clave){ verCambioClave(); return; }
+  if(perfil.usuario.rol==='SUPERADMIN' && !perfil.negocio){
+    await PP_API.salir();
+    verIngreso('Esta es la cuenta de la Consola. Para revisar un negocio, usa "Entrar como el negocio" desde la Consola.'); return;
+  }
+  if(perfil.usuario.rol!=='DUENO'){
+    await PP_API.salir();
+    verIngreso('Tu cuenta no administra el sitio. El Administrador del sitio es solo para el dueño del negocio.'); return;
+  }
+  $('#t-negocio').textContent = perfil.negocio.nombre;
+  $('#t-usuario').textContent = perfil.soporte ? '' : perfil.usuario.nombre;
+  const sop=$('#b-soporte');
+  sop.hidden=!perfil.soporte;
+  if(perfil.soporte) sop.innerHTML=`<span>Modo soporte: estás viendo el panel de ${esc(perfil.negocio.nombre)} como PrestoPronto. Lo que hagas queda registrado.</span><button type="button" id="b-fin-soporte">Terminar soporte</button>`;
+  const susp = perfil.negocio.estado_servicio==='SUSPENDIDO';
+  $('#b-suspendido').hidden=!susp;
+  if(susp) $('#b-suspendido').textContent = 'Servicio suspendido: puedes ver y exportar tu carta, pero no modificarla. Contacta a PrestoPronto para reactivarlo.' + (perfil.soporte?' En modo soporte sí se pueden hacer cambios.':'');
+  document.body.classList.toggle('solo-lectura', susp && !perfil.soporte);
+  $('#v-login').hidden=true; $('#v-app').hidden=false;
+  await cargarCatalogo();
+}
+
+$('#frm-ingreso').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const email=$('#l-email').value.trim(), clave=$('#l-clave').value;
+  if(!email||!clave){ $('#l-msg').innerHTML='<div class="aviso err">Ingresa tu correo y tu clave.</div>'; return; }
+  cargando(true); $('#l-msg').innerHTML='';
+  try { await abrirPanel(await PP_API.ingresar(email, clave)); }
+  catch(err){ $('#l-msg').innerHTML=`<div class="aviso err">${esc(err.message)}</div>`; }
+  finally { cargando(false); }
+});
+$('#frm-cambio').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const a=$('#c-actual').value, n=$('#c-nueva').value, n2=$('#c-nueva2').value;
+  const msg=t=>{ $('#c-msg').innerHTML=`<div class="aviso err">${esc(t)}</div>`; };
+  if(!a||!n) return msg('Completa los tres campos.');
+  if(n!==n2) return msg('Las dos claves nuevas no coinciden.');
+  if(n.length<8 || !/[A-Za-z]/.test(n) || !/\d/.test(n)) return msg('La nueva clave debe tener al menos 8 caracteres, con letras y números.');
+  cargando(true);
+  try { await abrirPanel(await PP_API.cambiarClave(a, n)); toast('Clave actualizada.'); }
+  catch(err){ msg(err.message); }
+  finally { cargando(false); }
+});
+
+$('#b-salir').addEventListener('click', async ()=>{
+  const soporte = PERFIL && PERFIL.soporte;
+  cargando(true); await PP_API.salir(); cargando(false);
+  verIngreso(soporte?'Terminaste el modo soporte. Puedes cerrar esta pestaña.':'');
+  if(soporte) window.close();
+});
+document.addEventListener('click', async e=>{
+  if(e.target.id!=='b-fin-soporte') return;
+  cargando(true); await PP_API.salir(); cargando(false);
+  verIngreso('Terminaste el modo soporte. Puedes cerrar esta pestaña.');
+  window.close();
+});
+
+/* =========================================================
+   Pestañas
+   ========================================================= */
+$$('.tabs button').forEach(b=>b.addEventListener('click', ()=>{
+  $$('.tabs button').forEach(x=>x.classList.toggle('on', x===b));
+  ['productos','categorias','carga'].forEach(t=>$('#tab-'+t).hidden = t!==b.dataset.tab);
+}));
+
+/* =========================================================
+   Catálogo
+   ========================================================= */
+async function cargarCatalogo(){
+  cargando(true);
+  try {
+    S = await PP_API.obtenerCatalogo();
+    S.categorias.sort(porOrden); S.subcategorias.sort(porOrden);
+    S.productos.sort((a,b)=>(Number(a.numero_carta)||0)-(Number(b.numero_carta)||0));
+    $('#t-negocio').textContent = S.negocio.nombre || '';
+    renderFiltros(); renderProductos(); renderCategorias();
+  } catch(e){ toast(e.message, true); }
+  finally { cargando(false); }
+}
+const catNombre = id => (S.categorias.find(c=>c.categoria_id===id)||{}).nombre||id;
+const subNombre = id => (S.subcategorias.find(s=>s.subcategoria_id===id)||{}).nombre||id;
+
+function renderKPIs(){
+  const P=S.productos, act=P.filter(p=>p.disponible==='SI').length;
+  const conCosto=P.filter(p=>num(p.costo)!==null && num(p.precio));
+  const m = conCosto.length ? conCosto.reduce((s,p)=>s+margen(p),0)/conCosto.length : null;
+  $('#kpis').innerHTML = `
+    <div class="kpi"><span>Productos</span><b>${P.length}</b></div>
+    <div class="kpi"><span>Disponibles</span><b>${act}</b></div>
+    <div class="kpi"><span>Con costo</span><b>${conCosto.length} / ${P.length}</b></div>
+    <div class="kpi"><span>Margen promedio</span><b>${m===null?'sin datos':pct(m)}</b></div>`;
+}
+
+function renderFiltros(){
+  const fc=$('#f-cat'), v=fc.value;
+  fc.innerHTML='<option value="">Todas</option>'+S.categorias.map(c=>`<option value="${esc(c.categoria_id)}">${esc(c.nombre)}</option>`).join('');
+  fc.value = S.categorias.some(c=>c.categoria_id===v)?v:'';
+  renderFiltroSub();
+  const prots=[...new Set(S.productos.map(p=>p.proteina_principal).filter(Boolean))].sort();
+  $('#proteinas').innerHTML=prots.map(p=>`<option value="${esc(p)}">`).join('');
+}
+function renderFiltroSub(){
+  const fs=$('#f-sub'), v=fs.value, cat=$('#f-cat').value;
+  const subs=S.subcategorias.filter(s=>!cat||s.categoria_id===cat);
+  fs.innerHTML='<option value="">Todas</option>'+subs.map(s=>`<option value="${esc(s.subcategoria_id)}">${esc(s.nombre)}</option>`).join('');
+  fs.value = subs.some(s=>s.subcategoria_id===v)?v:'';
+}
+$('#f-cat').addEventListener('change', ()=>{ renderFiltroSub(); renderProductos(); });
+['#f-sub','#f-est'].forEach(s=>$(s).addEventListener('change', renderProductos));
+$('#f-texto').addEventListener('input', renderProductos);
+
+function renderProductos(){
+  renderKPIs();
+  const q=normKey($('#f-texto').value), cat=$('#f-cat').value, sub=$('#f-sub').value, est=$('#f-est').value;
+  const L = S.productos.filter(p=>{
+    if(cat && p.categoria_id!==cat) return false;
+    if(sub && p.subcategoria_id!==sub) return false;
+    if(est==='SI' && p.disponible!=='SI') return false;
+    if(est==='NO' && p.disponible==='SI') return false;
+    if(est==='SINCOSTO' && num(p.costo)!==null) return false;
+    if(est==='SINFOTO' && !vacio(p.foto_url)) return false;
+    if(q){ const h=normKey([p.numero_carta,p.nombre,p.descripcion,p.proteina_principal].join(' ')); if(!h.includes(q)) return false; }
+    return true;
+  });
+  if(!S.productos.length){
+    $('#lista').innerHTML='<div class="vacio panel">Aún no hay productos. Cárgalos desde la pestaña Carga masiva o crea uno con el botón Nuevo.</div>'; return;
+  }
+  if(!L.length){ $('#lista').innerHTML='<div class="vacio">No hay productos con esos filtros.</div>'; return; }
+  $('#lista').innerHTML = L.map(p=>{
+    const m=margen(p), on=p.disponible==='SI';
+    const foto = vacio(p.foto_url) ? '<div class="foto">sin foto</div>' : `<div class="foto" style="background-image:url('${esc(p.foto_url)}')"></div>`;
+    return `<div class="prod ${on?'':'off'}" data-id="${esc(p.producto_id)}">
+      ${foto}
+      <div class="num">${esc(p.numero_carta)}</div>
+      <div class="nom"><b>${esc(p.nombre)}</b><small>${esc(subNombre(p.subcategoria_id))} · ${esc(p.descripcion)}</small></div>
+      <div class="val">${pesos(p.precio)}</div>
+      <div class="val">${num(p.costo)===null?'<span class="chip warn">sin costo</span>':pesos(p.costo)}</div>
+      <div class="val">${m===null?'':pct(m)}</div>
+      <div class="mov"><span>N° ${esc(p.numero_carta)}</span><b>${pesos(p.precio)}</b><span>${m===null?'sin costo':'margen '+pct(m)}</span></div>
+      <button class="sw edita ${on?'on':''}" data-sw="${esc(p.producto_id)}" aria-label="Disponible"></button>
+    </div>`;
+  }).join('');
+}
+
+$('#lista').addEventListener('click', async e=>{
+  const sw=e.target.closest('[data-sw]');
+  if(sw){
+    e.stopPropagation();
+    const p=S.productos.find(x=>x.producto_id===sw.dataset.sw); const nuevo=p.disponible==='SI'?'NO':'SI';
+    sw.disabled=true;
+    try { await PP_API.cambiarDisponible(p.producto_id, nuevo); p.disponible=nuevo; renderProductos();
+      toast(`${p.nombre}: ${nuevo==='SI'?'disponible':'no disponible'}`); }
+    catch(err){ toast(err.message,true); sw.disabled=false; }
+    return;
+  }
+  const fila=e.target.closest('.prod'); if(fila) abrirProducto(fila.dataset.id);
+});
+
+/* ---------- Diálogo de producto ---------- */
+const CAMPOS = ['numero_carta','nombre','subcategoria_id','descripcion','precio','costo','unidad','cantidad','disponible','vegetariano','proteina_principal','orden','observaciones'];
+
+function llenarCategoriasDlg(catSel, subSel){
+  $('#d-categoria').innerHTML = S.categorias.map(c=>`<option value="${esc(c.categoria_id)}">${esc(c.nombre)}</option>`).join('');
+  $('#d-categoria').value = catSel || (S.categorias[0]||{}).categoria_id || '';
+  llenarSubsDlg(subSel);
+}
+function llenarSubsDlg(subSel){
+  const cat=$('#d-categoria').value;
+  const subs=S.subcategorias.filter(s=>s.categoria_id===cat);
+  $('#d-subcategoria_id').innerHTML = subs.map(s=>`<option value="${esc(s.subcategoria_id)}">${esc(s.nombre)}</option>`).join('');
+  if(subSel && subs.some(s=>s.subcategoria_id===subSel)) $('#d-subcategoria_id').value=subSel;
+}
+$('#d-categoria').addEventListener('change', ()=>llenarSubsDlg());
+
+function abrirProducto(id){
+  if(!S.subcategorias.length){ toast('Primero crea al menos una categoría y una subcategoría.', true); return; }
+  const p = id ? S.productos.find(x=>x.producto_id===id) : null;
+  const sig = S.productos.reduce((m,x)=>Math.max(m, Number(x.numero_carta)||0), 0)+1;
+  EDIT = p ? Object.assign({}, p) : { producto_id:'', numero_carta:sig, disponible:'SI' };
+  $('#dlg-tit').textContent = p ? `${p.numero_carta}. ${p.nombre}` : 'Nuevo producto';
+  llenarCategoriasDlg(EDIT.categoria_id || $('#f-cat').value, EDIT.subcategoria_id || $('#f-sub').value);
+  CAMPOS.forEach(k=>{ if(k!=='subcategoria_id') $('#d-'+k).value = EDIT[k]==null?'':EDIT[k]; });
+  if(!EDIT.disponible) $('#d-disponible').value='SI';
+  pintarFoto(EDIT.foto_url);
+  $('#d-eliminar').hidden = !p;
+  const vars = p ? S.variantes.filter(v=>v.producto_id===p.producto_id) : [];
+  $('#d-variantes').innerHTML = vars.length ? `<div class="muted" style="font-size:13px;font-weight:600;margin-bottom:6px">Variantes (se editan por carga masiva)</div>
+    <div class="row">${vars.map(v=>`<span class="chip">${esc(v.grupo)}: ${esc(v.opcion)}${num(v.delta_precio)?' (+'+pesos(v.delta_precio)+')':''}</span>`).join('')}</div>` : '';
+  actualizarMargenDlg();
+  $('#dlg').showModal();
+}
+function pintarFoto(url){
+  const el=$('#d-prev');
+  if(vacio(url)){ el.style.backgroundImage=''; el.textContent='Sin foto'; }
+  else { el.style.backgroundImage=`url('${url}')`; el.textContent=''; }
+}
+function actualizarMargenDlg(){
+  const m=margen({precio:$('#d-precio').value, costo:$('#d-costo').value});
+  $('#d-margen').textContent = m===null ? 'sin costo' : `${pct(m)} (${pesos(num($('#d-precio').value)-num($('#d-costo').value))} por unidad)`;
+  $('#d-margen').style.color = m!==null && m<0 ? 'var(--err)' : '';
+}
+['#d-precio','#d-costo'].forEach(s=>$(s).addEventListener('input', actualizarMargenDlg));
+$('#b-nuevo').addEventListener('click', ()=>abrirProducto(null));
+
+$('#d-guardar').addEventListener('click', async ()=>{
+  const f=$('#frm'); if(!f.reportValidity()) return;
+  const prod = { producto_id: EDIT.producto_id, foto_url: EDIT.foto_url||'' };
+  CAMPOS.forEach(k=>prod[k]=$('#d-'+k).value);
+  cargando(true);
+  try {
+    const r = await PP_API.guardarProducto(prod);
+    $('#dlg').close(); await cargarCatalogo();
+    toast(r.advertencias && r.advertencias.length ? 'Guardado. Ojo: '+r.advertencias.join(' ') : 'Producto guardado.');
+  } catch(e){ toast(e.message,true); }
+  finally { cargando(false); }
+});
+
+$('#d-eliminar').addEventListener('click', async ()=>{
+  if(!EDIT.producto_id) return;
+  if(!confirm(`¿Eliminar definitivamente "${EDIT.nombre}"? Si ya tiene ventas, el sistema no lo permitirá y deberás desactivarlo.`)) return;
+  cargando(true);
+  try { await PP_API.eliminarProducto(EDIT.producto_id); $('#dlg').close(); await cargarCatalogo(); toast('Producto eliminado.'); }
+  catch(e){ toast(e.message,true); }
+  finally { cargando(false); }
+});
+
+/* ---------- Fotos ---------- */
+function reducirImagen(file, max=1000, calidad=.85){
+  return new Promise((ok,mal)=>{
+    const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{
+      const k=Math.min(1, max/Math.max(img.width,img.height));
+      const c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
+      ok(c.toDataURL('image/jpeg', calidad).split(',')[1]);
+    };
+    img.onerror=()=>mal(new Error('No se pudo leer la imagen.'));
+    img.src=url;
+  });
+}
+$('#d-foto').addEventListener('change', async e=>{
+  const file=e.target.files[0]; e.target.value=''; if(!file) return;
+  if(!EDIT.producto_id){ toast('Guarda el producto primero y luego sube la foto.', true); return; }
+  cargando(true);
+  try {
+    const base64=await reducirImagen(file);
+    const r=await PP_API.subirFoto(EDIT.producto_id, base64, 'image/jpeg');
+    EDIT.foto_url=r.url; pintarFoto(r.url);
+    const p=S.productos.find(x=>x.producto_id===EDIT.producto_id); if(p) p.foto_url=r.url;
+    renderProductos(); toast('Foto actualizada.');
+  } catch(err){ toast(err.message,true); }
+  finally { cargando(false); }
+});
+
+/* =========================================================
+   Categorías
+   ========================================================= */
+function renderCategorias(){
+  if(!S.categorias.length){
+    $('#cats').innerHTML='<div class="vacio">No hay categorías. Créalas aquí o súbelas en la Carga masiva.</div>'; return;
+  }
+  $('#cats').innerHTML = S.categorias.map(c=>{
+    const subs=S.subcategorias.filter(s=>s.categoria_id===c.categoria_id);
+    const nP = id => S.productos.filter(p=>p.subcategoria_id===id).length;
+    return `<div class="panel cat">
+      <div class="cat-h" data-cat="${esc(c.categoria_id)}">
+        <span class="codigo">${esc(c.categoria_id)}</span>
+        <input type="text" value="${esc(c.nombre)}" data-k="nombre" aria-label="Nombre">
+        <input type="number" value="${esc(c.orden)}" data-k="orden" aria-label="Orden" title="Orden">
+        <div class="row edita"><button class="btn sm" data-acc="g-cat">Guardar</button><button class="btn sm" data-acc="n-sub">+ Subcategoría</button>
+          <button class="btn sm danger" data-acc="x-cat">Eliminar</button></div>
+      </div>
+      <div class="subs">${subs.map(s=>`
+        <div class="sub" data-sub="${esc(s.subcategoria_id)}">
+          <span class="codigo">${esc(s.subcategoria_id)}</span>
+          <input type="text" value="${esc(s.nombre)}" data-k="nombre" aria-label="Nombre">
+          <input type="number" value="${esc(s.orden)}" data-k="orden" aria-label="Orden" title="Orden">
+          <span class="chip">${nP(s.subcategoria_id)} prod.</span>
+          <div class="row edita"><button class="btn sm" data-acc="g-sub">Guardar</button><button class="btn sm danger" data-acc="x-sub">Eliminar</button></div>
+        </div>`).join('')}
+      </div></div>`;
+  }).join('');
+}
+
+$('#cats').addEventListener('click', async e=>{
+  const b=e.target.closest('[data-acc]'); if(!b) return;
+  const catEl=b.closest('[data-cat]')||b.closest('.cat').querySelector('[data-cat]');
+  const subEl=b.closest('[data-sub]');
+  const val=(el,k)=>el.querySelector(`[data-k="${k}"]`).value;
+  try {
+    if(b.dataset.acc==='g-cat'){
+      cargando(true);
+      await PP_API.guardarCategoria({categoria_id:catEl.dataset.cat, nombre:val(catEl,'nombre'), orden:val(catEl,'orden')});
+      toast('Categoría guardada.'); await cargarCatalogo();
+    } else if(b.dataset.acc==='x-cat'){
+      if(!confirm('¿Eliminar esta categoría?')) return;
+      cargando(true); await PP_API.eliminarCategoria(catEl.dataset.cat); toast('Categoría eliminada.'); await cargarCatalogo();
+    } else if(b.dataset.acc==='n-sub'){
+      const nombre=prompt('Nombre de la nueva subcategoría'); if(!nombre) return;
+      cargando(true); await PP_API.guardarSubcategoria({categoria_id:catEl.dataset.cat, nombre}, true);
+      toast('Subcategoría creada.'); await cargarCatalogo();
+    } else if(b.dataset.acc==='g-sub'){
+      cargando(true);
+      await PP_API.guardarSubcategoria({subcategoria_id:subEl.dataset.sub, nombre:val(subEl,'nombre'), orden:val(subEl,'orden')});
+      toast('Subcategoría guardada.'); await cargarCatalogo();
+    } else if(b.dataset.acc==='x-sub'){
+      if(!confirm('¿Eliminar esta subcategoría?')) return;
+      cargando(true); await PP_API.eliminarSubcategoria(subEl.dataset.sub); toast('Subcategoría eliminada.'); await cargarCatalogo();
+    }
+  } catch(err){ toast(err.message,true); }
+  finally { cargando(false); }
+});
+$('#b-nueva-cat').addEventListener('click', async ()=>{
+  const nombre=prompt('Nombre de la nueva categoría'); if(!nombre) return;
+  cargando(true);
+  try { await PP_API.guardarCategoria({nombre}, true); toast('Categoría creada.'); await cargarCatalogo(); }
+  catch(e){ toast(e.message,true); }
+  finally { cargando(false); }
+});
+
+/* =========================================================
+   Exportar y plantilla
+   ========================================================= */
+function libroCatalogo(vacio){
+  const wb=XLSX.utils.book_new();
+  HOJAS.forEach(h=>{
+    const filas = vacio ? [] : ({Categorias:S.categorias, Subcategorias:S.subcategorias, Productos:S.productos, Variantes:S.variantes})[h];
+    const aoa=[COLUMNAS[h], ...filas.map(r=>COLUMNAS[h].map(k=>r[k]==null?'':r[k]))];
+    const ws=XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols']=COLUMNAS[h].map(k=>({wch: k==='descripcion'||k==='observaciones'?60 : k==='nombre'?32 : Math.max(10,k.length+2)}));
+    XLSX.utils.book_append_sheet(wb, ws, h);
+  });
+  const ins=[
+    ['Instrucciones de carga masiva'],[''],
+    ['1. No cambies los nombres de las hojas ni de las columnas de la fila 1.'],
+    ['2. Orden de carga: Categorias, Subcategorias, Productos y Variantes. Puedes subir solo las hojas que necesites.'],
+    ['3. Productos: numero_carta, nombre, subcategoria_id y precio son obligatorios. producto_id y categoria_id se completan solos.'],
+    ['   negocio_id puede ir vacío: se completa con el negocio activo en el panel. Si trae otro negocio, la fila se rechaza.'],
+    ['4. Precios y costos en pesos, sin decimales. Se aceptan formatos como 6000, 6.000 o $6.000.'],
+    ['5. disponible: SI o NO. vegetariano: SI, NO o NA.'],
+    ['6. Una celda vacía no borra un dato ya guardado. Para borrar un costo, hazlo desde el panel.'],
+    ['7. Si el producto ya existe (mismo producto_id o mismo numero_carta) se actualiza; si no, se crea.'],
+    ['8. Si hay un solo error, no se guarda nada. Primero valida, luego confirma.'],
+    [''],['Ejemplo de fila de Productos:'],
+    COLUMNAS.Productos,
+    ['', PERFIL.negocio.negocio_id, 105, 'California Tori Cheese', '', 'CAL', 'Pollito furai, queso crema, palta; envuelto en sésamo o ciboulette', 'bocados', 8, 5500, '', '', 'SI', 'NO', 'Pollo', 105, '']
+  ];
+  const wi=XLSX.utils.aoa_to_sheet(ins); wi['!cols']=[{wch:110}];
+  XLSX.utils.book_append_sheet(wb, wi, 'Instrucciones');
+  return wb;
+}
+function exportar(){ if(!S) return; XLSX.writeFile(libroCatalogo(false), `Catalogo_${PERFIL.negocio.slug||PERFIL.negocio.negocio_id}.xlsx`); }
+$('#b-exportar').addEventListener('click', exportar);
+$('#b-exportar2').addEventListener('click', exportar);
+$('#b-plantilla').addEventListener('click', ()=>XLSX.writeFile(libroCatalogo(true), 'Plantilla_Carga_Masiva.xlsx'));
+
+/* =========================================================
+   Carga masiva
+   ========================================================= */
+const drop=$('#drop'), inp=$('#archivo');
+drop.addEventListener('click', ()=>inp.click());
+drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', ()=>drop.classList.remove('over'));
+drop.addEventListener('drop', e=>{ e.preventDefault(); drop.classList.remove('over'); if(e.dataTransfer.files[0]) leerArchivo(e.dataTransfer.files[0]); });
+inp.addEventListener('change', e=>{ if(e.target.files[0]) leerArchivo(e.target.files[0]); e.target.value=''; });
+
+function paso(n){ [1,2,3].forEach(i=>{ $('#p'+i).classList.toggle('on', i===n); $('#p'+i).classList.toggle('hecho', i<n); }); }
+
+function hojaAFilas(ws){
+  const rango = XLSX.utils.decode_range(ws['!ref']||'A1');
+  const aoa = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', blankrows:true, raw:true});
+  if(!aoa.length) return [];
+  const cab = aoa[0].map(h=>{ const k=normKey(h); return ALIAS[k]||k; });
+  const filas=[];
+  for(let i=1;i<aoa.length;i++){
+    const r=aoa[i];
+    if(!r.some(c=>!vacio(c))) continue;
+    const o={_fila: rango.s.r + i + 1};
+    cab.forEach((k,j)=>{ if(!k) return; const v=r[j]; o[k]= typeof v==='string' ? v.trim() : v; });
+    filas.push(o);
+  }
+  return filas;
+}
+
+async function leerArchivo(file){
+  limpiarImportacion();
+  cargando(true);
+  try {
+    const wb = XLSX.read(await file.arrayBuffer(), {type:'array'});
+    const hojas={}, ignoradas=[];
+    wb.SheetNames.forEach(nombre=>{
+      const k=normKey(nombre);
+      const h=HOJAS.find(x=>normKey(x)===k);
+      if(h) hojas[h]=hojaAFilas(wb.Sheets[nombre]); else ignoradas.push(nombre);
+    });
+    // Un archivo de una sola hoja con columna numero_carta se interpreta como Productos
+    if(!Object.keys(hojas).length && wb.SheetNames.length===1){
+      const f=hojaAFilas(wb.Sheets[wb.SheetNames[0]]);
+      if(f.length && 'numero_carta' in f[0]){ hojas.Productos=f; ignoradas.length=0; }
+    }
+    if(!Object.keys(hojas).length) throw new Error('El archivo no tiene hojas llamadas Categorias, Subcategorias, Productos o Variantes.');
+    IMP={nombre:file.name, hojas, ignoradas};
+    renderArchivo(); paso(2);
+  } catch(e){ toast(e.message,true); }
+  finally { cargando(false); }
+}
+
+function renderArchivo(){
+  const filas=HOJAS.map(h=>`<tr><td>${h}</td><td class="n">${IMP.hojas[h]?IMP.hojas[h].length:'<span class="muted">no viene</span>'}</td></tr>`).join('');
+  const P=IMP.hojas.Productos||[];
+  const prev = P.length ? `<h3 class="mt" style="font-size:16px">Vista previa de Productos (primeras 10 filas)</h3>
+    <div class="scroll mt"><table class="t"><thead><tr><th>Fila</th><th>N°</th><th>Nombre</th><th>Subcat.</th><th>Precio</th><th>Costo</th><th>Disp.</th></tr></thead><tbody>
+    ${P.slice(0,10).map(p=>`<tr><td>${p._fila}</td><td>${esc(p.numero_carta)}</td><td>${esc(p.nombre)}</td><td>${esc(p.subcategoria_id)}</td>
+      <td class="n">${esc(p.precio)}</td><td class="n">${esc(p.costo)}</td><td>${esc(p.disponible)}</td></tr>`).join('')}
+    </tbody></table></div>` : '';
+  $('#imp-archivo').innerHTML = `<div class="aviso ok"><b>${esc(IMP.nombre)}</b> leído correctamente.</div>
+    <table class="t mt" style="max-width:360px"><thead><tr><th>Hoja</th><th class="n">Filas</th></tr></thead><tbody>${filas}</tbody></table>
+    ${IMP.ignoradas.length?`<p class="muted" style="font-size:13px">Hojas que no se cargan: ${IMP.ignoradas.map(esc).join(', ')}.</p>`:''}
+    ${prev}`;
+  $('#imp-opciones').hidden=false; $('#b-confirmar').disabled=true; $('#imp-resultado').innerHTML='';
+}
+
+function limpiarImportacion(){
+  IMP=null; $('#imp-archivo').innerHTML=''; $('#imp-resultado').innerHTML=''; $('#imp-opciones').hidden=true;
+  $('#b-confirmar').disabled=true; $('#o-desactivar').checked=false; paso(1);
+}
+$('#b-limpiar').addEventListener('click', limpiarImportacion);
+$('#o-desactivar').addEventListener('change', ()=>{ $('#b-confirmar').disabled=true; $('#imp-resultado').innerHTML=''; paso(2); });
+
+async function ejecutarImportacion(simular){
+  cargando(true);
+  try {
+    const r = await PP_API.importarCatalogo(IMP.hojas, {simular, desactivarAusentes:$('#o-desactivar').checked});
+    renderResultado(r);
+    if(simular){ $('#b-confirmar').disabled = r.errores.length>0; paso(r.errores.length?2:3); }
+    else if(r.guardado){ toast('Carga masiva completada.'); await cargarCatalogo(); $('#b-confirmar').disabled=true; }
+  } catch(e){ toast(e.message,true); }
+  finally { cargando(false); }
+}
+$('#b-validar').addEventListener('click', ()=>ejecutarImportacion(true));
+$('#b-confirmar').addEventListener('click', ()=>{
+  const d=$('#o-desactivar').checked ? ' Los productos que no vienen en el archivo quedarán como no disponibles.' : '';
+  if(confirm('¿Confirmas la carga?'+d)) ejecutarImportacion(false);
+});
+
+function renderResultado(r){
+  const res=HOJAS.filter(h=>r.resumen[h]).map(h=>{ const x=r.resumen[h];
+    return `<tr><td>${h}</td><td class="n">${x.nuevos}</td><td class="n">${x.actualizados}</td><td class="n">${x.sinCambios}</td>
+      <td class="n">${x.conError?'<b style="color:var(--err)">'+x.conError+'</b>':0}</td></tr>`; }).join('');
+  let cab;
+  if(r.errores.length) cab=`<div class="aviso err"><b>Se encontraron ${r.errores.length} errores.</b> No se guardó nada. Corrige el Excel y vuelve a subirlo.</div>`;
+  else if(r.guardado) cab=`<div class="aviso ok"><b>Carga guardada.</b></div>`;
+  else cab=`<div class="aviso ok"><b>Validación sin errores.</b> Revisa el resumen y presiona Confirmar carga.</div>`;
+  const tabla=(lista)=>`<div class="scroll mt"><table class="t"><thead><tr><th>Hoja</th><th>Fila</th><th>Campo</th><th>Detalle</th></tr></thead><tbody>
+    ${lista.slice(0,300).map(e=>`<tr><td>${esc(e.hoja)}</td><td>${esc(e.fila)}</td><td>${esc(e.campo)}</td><td>${esc(e.mensaje)}</td></tr>`).join('')}
+    </tbody></table></div>${lista.length>300?`<p class="muted">Se muestran 300 de ${lista.length}.</p>`:''}`;
+  $('#imp-resultado').innerHTML = `${cab}
+    <table class="t mt"><thead><tr><th>Hoja</th><th class="n">Nuevos</th><th class="n">Actualizados</th><th class="n">Sin cambios</th><th class="n">Con error</th></tr></thead>
+    <tbody>${res}</tbody></table>
+    ${r.desactivados?`<p class="aviso warn mt">${r.desactivados} productos ${r.guardado?'quedaron':'quedarían'} como no disponibles por no venir en el archivo.</p>`:''}
+    ${r.errores.length?`<h3 class="mt" style="font-size:16px;color:var(--err)">Errores</h3>${tabla(r.errores)}`:''}
+    ${r.advertencias.length?`<details class="mt"><summary style="cursor:pointer;font-weight:600">Advertencias (${r.advertencias.length}), no impiden la carga</summary>${tabla(r.advertencias)}</details>`:''}`;
+}
+
+/* =========================================================
+   Arranque
+   ========================================================= */
+PP_API.iniciar({ ambiente:'sitio', alExpirar: msg=>verIngreso(msg) });
+(async function(){
+  if(!PP_API.configurado()){ verIngreso('Falta configurar la URL del sistema en el archivo api.js.'); return; }
+  if(PP_API.tieneSesion()){
+    cargando(true);
+    try { await abrirPanel(await PP_API.perfil()); return; }
+    catch(e){ verIngreso(e.codigo==='SESION'?e.message:''); return; }
+    finally { cargando(false); }
+  }
+  verIngreso('');
+})();
+</script>
+</body>
+</html>
