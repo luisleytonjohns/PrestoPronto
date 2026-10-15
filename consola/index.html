@@ -1,1 +1,671 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrestoPronto | Consola</title>
+<!--
+  PrestoPronto, versión 1.2
+  Archivo: consola/index.html (Consola de la plataforma; usa ../api.js)
+  Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
+-->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2223%22%20fill%3D%22%23E53935%22/%3E%3Cg%20transform%3D%22translate%2850%2050%29%20scale%280.9%29%20rotate%2845%29%20translate%28-50%20-53%29%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M38.5%2050%20Q29%2056%2028%2072%20L38.5%2067%20Z%20M61.5%2050%20Q71%2056%2072%2072%20L61.5%2067%20Z%22/%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M50%2012%20C64%2022%2065%2044%2062%2069%20L38%2069%20C35%2044%2036%2022%2050%2012%20Z%22/%3E%3Cg%20fill%3D%22%23E53935%22%3E%3Crect%20x%3D%2244.8%22%20y%3D%2225%22%20width%3D%222.6%22%20height%3D%2213%22%20rx%3D%221.3%22/%3E%3Crect%20x%3D%2248.7%22%20y%3D%2225%22%20width%3D%222.6%22%20height%3D%2213%22%20rx%3D%221.3%22/%3E%3Crect%20x%3D%2252.6%22%20y%3D%2225%22%20width%3D%222.6%22%20height%3D%2213%22%20rx%3D%221.3%22/%3E%3Cpath%20d%3D%22M44.8%2035.5%20H55.2%20V39.5%20Q55.2%2044.5%2051.8%2045.5%20H48.2%20Q44.8%2044.5%2044.8%2039.5%20Z%22/%3E%3Crect%20x%3D%2248.2%22%20y%3D%2244%22%20width%3D%223.6%22%20height%3D%2219%22%20rx%3D%221.8%22/%3E%3C/g%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M43.5%2073%20H56.5%20Q56%2082%2050%2091%20Q44%2082%2043.5%2073%20Z%22/%3E%3Cg%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%223.4%22%20stroke-linecap%3D%22round%22%3E%3Cline%20x1%3D%2235%22%20y1%3D%2278%22%20x2%3D%2235%22%20y2%3D%2286%22/%3E%3Cline%20x1%3D%2265%22%20y1%3D%2278%22%20x2%3D%2265%22%20y2%3D%2284%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="../api.js"></script>
+<style>
+:root{
+  --bg:#F3F3F6; --panel:#FFFFFF; --ink:#18181B; --muted:#62626B; --line:#E2E2E8;
+  --acc:#E53935; --acc-ink:#FFFFFF; --acc-soft:#FDECEA; --dark:#18181B; --azul:#2F6FEB;
+  --ok:#1E7A46; --ok-bg:#E6F4EC; --warn:#8A6100; --warn-bg:#FFF4D1; --err:#B42318; --err-bg:#FDECEA; --chip:#EEEEF2;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:Poppins,Inter,sans-serif;font-weight:700;margin:0}
+[hidden]{display:none!important}
+a{color:var(--azul)}
+.num{font-variant-numeric:tabular-nums}
 
+/* Ingreso */
+.login{min-height:100vh;display:grid;place-items:center;padding:16px;background:var(--dark)}
+.login .card{width:100%;max-width:420px;background:var(--panel);border-radius:16px;padding:28px}
+.login p{color:var(--muted);margin:4px 0 20px}
+.logo{display:block;height:auto}
+.login .logo{width:230px;color:var(--ink);margin-bottom:16px}
+.marca-consola{display:inline-block;background:var(--dark);color:#fff;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;padding:3px 8px;margin-bottom:10px}
+
+/* Estructura */
+.top{background:var(--dark);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top .logo{width:150px;color:#fff;flex:none}
+.top .ctx{flex:1;min-width:100px;font-size:13px;color:#BDBDC6;border-left:1px solid #3A3A40;padding-left:12px}
+.top .ctx b{color:#fff;display:block;font-size:14px}
+.top button{background:none;border:0;color:#BDBDC6;cursor:pointer;padding:6px;margin-left:auto}
+.tabs{display:flex;gap:4px;padding:0 16px;background:var(--dark);overflow-x:auto}
+.tabs button{background:none;border:0;color:#BDBDC6;padding:12px 14px;cursor:pointer;border-bottom:3px solid transparent;font-weight:600;white-space:nowrap}
+.tabs button.on{color:#fff;border-color:var(--acc)}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 80px}
+@media(max-width:520px){.top .ctx{border:0;padding-left:0;flex-basis:100%;order:3}}
+
+/* Componentes */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.panel+.panel{margin-top:14px}
+.panel h2{font-size:18px;margin-bottom:12px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:600;display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:#C6C6CE}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.dark{background:var(--dark);border-color:var(--dark);color:#fff}
+.btn.azul{background:var(--azul);border-color:var(--azul);color:#fff}
+.btn.danger{color:var(--err)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--muted)}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#fff;color:var(--ink);font-weight:400}
+textarea{min-height:70px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:0}
+input[type=radio],input[type=checkbox]{width:auto}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.muted{color:var(--muted)}
+.mt{margin-top:14px}
+.aviso{border-radius:10px;padding:10px 12px;font-size:14px}
+.aviso.ok{background:var(--ok-bg);color:var(--ok)}
+.aviso.err{background:var(--err-bg);color:var(--err)}
+.aviso.warn{background:var(--warn-bg);color:var(--warn)}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.p-ACTIVO{background:var(--ok-bg);color:var(--ok)}
+.p-SUSPENDIDO{background:var(--warn-bg);color:var(--warn)}
+.p-BAJA{background:var(--chip);color:var(--muted)}
+.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;color:#45454D}
+.chip.err{background:var(--err-bg);color:var(--err)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+
+/* Resumen */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:14px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px}
+.kpi span{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.kpi b{display:block;font-family:Poppins;font-size:24px;margin-top:4px}
+.alerta{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.alerta:last-child{border-bottom:0}
+.alerta .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;flex:none}
+.alerta.PAGO .ic{background:var(--err-bg);color:var(--err)}
+.alerta.TESTIMONIO .ic{background:#E8EFFE;color:var(--azul)}
+.alerta.TRUEQUE .ic,.alerta.CONSUMO .ic{background:var(--warn-bg);color:var(--warn)}
+.alerta b{display:block}
+.alerta small{color:var(--muted)}
+.dos{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+@media(max-width:900px){.dos{grid-template-columns:1fr}}
+
+/* Tablas */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table.t{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+table.t th,table.t td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:#FAFAFB;white-space:nowrap}
+table.t tr:last-child td{border-bottom:0}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.t tr.click{cursor:pointer}
+table.t tr.click:hover td{background:#FAFAFB}
+table.t tr.anulado td{color:var(--muted);text-decoration:line-through}
+.vacio{text-align:center;padding:30px 16px;color:var(--muted)}
+.toolbar{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:12px}
+@media(max-width:760px){.toolbar{grid-template-columns:1fr 1fr}}
+
+/* Ficha */
+.ficha-cab{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}
+.ficha-cab h1{font-size:26px}
+.ficha-cab .sub{color:var(--muted);font-size:14px;margin-top:2px}
+.subtabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.subtabs button{background:none;border:0;padding:10px 12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.subtabs button.on{color:var(--ink);border-color:var(--acc)}
+.cifras{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media(max-width:760px){.cifras{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cifra{background:#FAFAFB;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.cifra span{font-size:12px;color:var(--muted);font-weight:600}
+.cifra b{display:block;font-size:18px;margin-top:2px}
+
+/* Diálogos */
+dialog{border:0;border-radius:16px;padding:0;width:min(640px,96vw);max-height:92vh}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.dh{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.dh h2{font-size:19px;flex:1}
+.db{padding:18px 20px;overflow:auto;max-height:65vh}
+.df{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.pasos{display:flex;gap:6px;margin-bottom:14px}
+.pasos span{flex:1;height:5px;border-radius:3px;background:var(--line)}
+.pasos span.on{background:var(--acc)}
+.opciones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:560px){.opciones{grid-template-columns:1fr}}
+.opcion{border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;display:flex;gap:8px;align-items:flex-start}
+.opcion:has(input:checked){border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.opcion b{display:block}
+.opcion small{color:var(--muted)}
+.credencial{background:#FAFAFB;border:1px dashed #C6C6CE;border-radius:12px;padding:14px;font-size:15px}
+.credencial code{font-size:20px;font-weight:700;letter-spacing:.06em;font-family:ui-monospace,Menlo,monospace}
+.msj{white-space:pre-wrap;background:#FAFAFB;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px}
+
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:12px 16px;border-radius:12px;max-width:92vw;z-index:100;font-size:14px}
+#toast.err{background:var(--err)}
+#cargando{position:fixed;inset:0;background:rgba(255,255,255,.55);display:grid;place-items:center;z-index:90}
+.spin{width:38px;height:38px;border:4px solid #E2E2E8;border-top-color:var(--acc);border-radius:50%;animation:g 1s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ================= INGRESO ================= -->
+<section id="v-login" class="login" hidden>
+  <div class="card">
+    <svg class="logo" viewBox="0 0 487 100" role="img" aria-label="PrestoPronto"><rect width="100" height="100" rx="23" fill="#E53935"/><g transform="translate(50 50) scale(0.9) rotate(45) translate(-50 -53)"><path fill="#FFFFFF" d="M38.5 50 Q29 56 28 72 L38.5 67 Z M61.5 50 Q71 56 72 72 L61.5 67 Z"/><path fill="#FFFFFF" d="M50 12 C64 22 65 44 62 69 L38 69 C35 44 36 22 50 12 Z"/><g fill="#E53935"><rect x="44.8" y="25" width="2.6" height="13" rx="1.3"/><rect x="48.7" y="25" width="2.6" height="13" rx="1.3"/><rect x="52.6" y="25" width="2.6" height="13" rx="1.3"/><path d="M44.8 35.5 H55.2 V39.5 Q55.2 44.5 51.8 45.5 H48.2 Q44.8 44.5 44.8 39.5 Z"/><rect x="48.2" y="44" width="3.6" height="19" rx="1.8"/></g><path fill="#FFFFFF" d="M43.5 73 H56.5 Q56 82 50 91 Q44 82 43.5 73 Z"/><g stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"><line x1="35" y1="78" x2="35" y2="86"/><line x1="65" y1="78" x2="65" y2="84"/></g></g><path fill="currentColor" d="M140.7 56.2H135.5V69.0H125.0V31.2H140.7Q145.2 31.2 148.4 32.8Q151.6 34.4 153.2 37.2Q154.8 40.1 154.8 43.8Q154.8 47.2 153.2 50.0Q151.6 52.8 148.5 54.5Q145.3 56.2 140.7 56.2ZM144.1 43.8Q144.1 39.6 139.6 39.6H135.5V47.8H139.6Q144.1 47.8 144.1 43.8Z M178.8 38.6V49.8H175.9Q172.4 49.8 170.8 51.2Q169.1 52.5 169.1 55.8V69.0H158.6V38.9H169.1V44.2Q170.9 41.6 173.4 40.1Q175.9 38.6 178.8 38.6Z M210.7 56.0H190.8Q191.0 58.5 192.2 59.7Q193.4 60.9 195.3 60.9Q197.9 60.9 199.0 58.6H210.2Q209.5 61.7 207.5 64.1Q205.5 66.5 202.5 67.9Q199.4 69.3 195.7 69.3Q191.3 69.3 187.8 67.4Q184.3 65.6 182.4 62.1Q180.4 58.6 180.4 53.9Q180.4 49.2 182.4 45.7Q184.3 42.3 187.7 40.4Q191.2 38.5 195.7 38.5Q200.1 38.5 203.6 40.3Q207.0 42.2 208.9 45.6Q210.9 49.0 210.9 53.6Q210.9 54.8 210.7 56.0ZM200.1 50.9Q200.1 49.0 198.9 47.9Q197.6 46.8 195.6 46.8Q193.7 46.8 192.5 47.9Q191.3 48.9 190.9 50.9Z M213.2 58.8H223.4Q223.6 60.3 224.7 61.1Q225.8 61.9 227.5 61.9Q228.8 61.9 229.5 61.3Q230.3 60.8 230.3 59.9Q230.3 58.8 229.0 58.3Q227.8 57.7 225.0 57.1Q221.7 56.5 219.6 55.7Q217.5 54.9 215.9 53.0Q214.3 51.2 214.3 48.1Q214.3 45.4 215.7 43.3Q217.2 41.1 220.0 39.8Q222.8 38.5 226.8 38.5Q232.7 38.5 236.1 41.4Q239.4 44.3 240.0 49.0H230.5Q230.2 47.6 229.2 46.8Q228.2 46.0 226.6 46.0Q225.3 46.0 224.6 46.5Q223.9 47.0 223.9 47.8Q223.9 48.9 225.2 49.5Q226.4 50.0 229.1 50.6Q232.4 51.3 234.6 52.2Q236.8 53.0 238.4 54.9Q240.0 56.8 240.0 60.1Q240.0 62.7 238.5 64.8Q237.0 66.9 234.2 68.1Q231.3 69.3 227.5 69.3Q223.5 69.3 220.3 68.0Q217.1 66.6 215.2 64.2Q213.4 61.8 213.2 58.8Z M262.5 60.0V69.0H257.9Q246.4 69.0 246.4 57.5V47.6H242.7V38.9H246.4V31.6H257.0V38.9H262.4V47.6H257.0V57.7Q257.0 58.9 257.5 59.5Q258.1 60.0 259.4 60.0Z M265.2 53.9Q265.2 49.2 267.2 45.7Q269.3 42.3 272.9 40.4Q276.4 38.5 280.9 38.5Q285.4 38.5 289.0 40.4Q292.5 42.3 294.6 45.7Q296.7 49.2 296.7 53.9Q296.7 58.6 294.6 62.1Q292.5 65.6 289.0 67.4Q285.4 69.3 280.9 69.3Q276.4 69.3 272.8 67.4Q269.2 65.6 267.2 62.1Q265.2 58.6 265.2 53.9ZM286.0 53.9Q286.0 50.8 284.5 49.2Q283.1 47.6 280.9 47.6Q278.8 47.6 277.3 49.2Q275.9 50.8 275.9 53.9Q275.9 57.0 277.3 58.6Q278.7 60.2 280.9 60.2Q283.1 60.2 284.5 58.6Q286.0 56.9 286.0 53.9Z"/><path fill="#E53935" d="M316.2 56.2H311.0V69.0H300.5V31.2H316.2Q320.8 31.2 324.0 32.8Q327.2 34.4 328.8 37.2Q330.4 40.1 330.4 43.8Q330.4 47.2 328.8 50.0Q327.2 52.8 324.0 54.5Q320.8 56.2 316.2 56.2ZM319.7 43.8Q319.7 39.6 315.2 39.6H311.0V47.8H315.2Q319.7 47.8 319.7 43.8Z M354.4 38.6V49.8H351.5Q348.0 49.8 346.4 51.2Q344.7 52.5 344.7 55.8V69.0H334.2V38.9H344.7V44.2Q346.5 41.6 349.0 40.1Q351.5 38.6 354.4 38.6Z M356.0 53.9Q356.0 49.2 358.1 45.7Q360.1 42.3 363.7 40.4Q367.3 38.5 371.8 38.5Q376.3 38.5 379.8 40.4Q383.4 42.3 385.5 45.7Q387.5 49.2 387.5 53.9Q387.5 58.6 385.5 62.1Q383.4 65.6 379.8 67.4Q376.2 69.3 371.7 69.3Q367.2 69.3 363.6 67.4Q360.1 65.6 358.0 62.1Q356.0 58.6 356.0 53.9ZM376.9 53.9Q376.9 50.8 375.4 49.2Q373.9 47.6 371.8 47.6Q369.6 47.6 368.2 49.2Q366.7 50.8 366.7 53.9Q366.7 57.0 368.1 58.6Q369.5 60.2 371.7 60.2Q373.9 60.2 375.4 58.6Q376.9 56.9 376.9 53.9Z M422.4 51.4V69.0H411.9V52.8Q411.9 50.2 410.5 48.8Q409.2 47.3 406.9 47.3Q404.6 47.3 403.2 48.8Q401.9 50.2 401.9 52.8V69.0H391.4V38.9H401.9V43.2Q403.3 41.1 405.6 39.9Q408.0 38.6 411.1 38.6Q416.2 38.6 419.3 42.1Q422.4 45.5 422.4 51.4Z M445.5 60.0V69.0H440.9Q429.4 69.0 429.4 57.5V47.6H425.7V38.9H429.4V31.6H439.9V38.9H445.4V47.6H439.9V57.7Q439.9 58.9 440.5 59.5Q441.1 60.0 442.4 60.0Z M448.1 53.9Q448.1 49.2 450.2 45.7Q452.3 42.3 455.8 40.4Q459.4 38.5 463.9 38.5Q468.4 38.5 472.0 40.4Q475.5 42.3 477.6 45.7Q479.7 49.2 479.7 53.9Q479.7 58.6 477.6 62.1Q475.5 65.6 471.9 67.4Q468.3 69.3 463.8 69.3Q459.3 69.3 455.8 67.4Q452.2 65.6 450.2 62.1Q448.1 58.6 448.1 53.9ZM469.0 53.9Q469.0 50.8 467.5 49.2Q466.0 47.6 463.9 47.6Q461.8 47.6 460.3 49.2Q458.9 50.8 458.9 53.9Q458.9 57.0 460.3 58.6Q461.6 60.2 463.8 60.2Q466.0 60.2 467.5 58.6Q469.0 56.9 469.0 53.9Z"/></svg>
+    <span class="marca-consola">Consola</span>
+    <div id="f-ingreso">
+      <h1 style="font-size:22px">Administración de la plataforma</h1>
+      <p>Acceso exclusivo del equipo PrestoPronto.</p>
+      <form class="grid" id="frm-ingreso" novalidate>
+        <label class="f">Correo<input type="email" id="l-email" autocomplete="username"></label>
+        <label class="f">Clave<input type="password" id="l-clave" autocomplete="current-password"></label>
+        <div id="l-msg"></div>
+        <button class="btn pri" type="submit">Ingresar</button>
+      </form>
+    </div>
+    <div id="f-cambio" hidden>
+      <h1 style="font-size:22px">Crea tu clave</h1>
+      <p>Reemplaza la clave temporal por una tuya: al menos 8 caracteres, con letras y números.</p>
+      <form class="grid" id="frm-cambio" novalidate>
+        <label class="f">Clave temporal<input type="password" id="c-actual" autocomplete="current-password"></label>
+        <label class="f">Nueva clave<input type="password" id="c-nueva" autocomplete="new-password"></label>
+        <label class="f">Repite la nueva clave<input type="password" id="c-nueva2" autocomplete="new-password"></label>
+        <div id="c-msg"></div>
+        <button class="btn pri" type="submit">Guardar y entrar</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APLICACIÓN ================= -->
+<div id="v-app" hidden>
+  <header class="top">
+    <svg class="logo" viewBox="0 0 487 100" role="img" aria-label="PrestoPronto"><rect width="100" height="100" rx="23" fill="#E53935"/><g transform="translate(50 50) scale(0.9) rotate(45) translate(-50 -53)"><path fill="#FFFFFF" d="M38.5 50 Q29 56 28 72 L38.5 67 Z M61.5 50 Q71 56 72 72 L61.5 67 Z"/><path fill="#FFFFFF" d="M50 12 C64 22 65 44 62 69 L38 69 C35 44 36 22 50 12 Z"/><g fill="#E53935"><rect x="44.8" y="25" width="2.6" height="13" rx="1.3"/><rect x="48.7" y="25" width="2.6" height="13" rx="1.3"/><rect x="52.6" y="25" width="2.6" height="13" rx="1.3"/><path d="M44.8 35.5 H55.2 V39.5 Q55.2 44.5 51.8 45.5 H48.2 Q44.8 44.5 44.8 39.5 Z"/><rect x="48.2" y="44" width="3.6" height="19" rx="1.8"/></g><path fill="#FFFFFF" d="M43.5 73 H56.5 Q56 82 50 91 Q44 82 43.5 73 Z"/><g stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"><line x1="35" y1="78" x2="35" y2="86"/><line x1="65" y1="78" x2="65" y2="84"/></g></g><path fill="currentColor" d="M140.7 56.2H135.5V69.0H125.0V31.2H140.7Q145.2 31.2 148.4 32.8Q151.6 34.4 153.2 37.2Q154.8 40.1 154.8 43.8Q154.8 47.2 153.2 50.0Q151.6 52.8 148.5 54.5Q145.3 56.2 140.7 56.2ZM144.1 43.8Q144.1 39.6 139.6 39.6H135.5V47.8H139.6Q144.1 47.8 144.1 43.8Z M178.8 38.6V49.8H175.9Q172.4 49.8 170.8 51.2Q169.1 52.5 169.1 55.8V69.0H158.6V38.9H169.1V44.2Q170.9 41.6 173.4 40.1Q175.9 38.6 178.8 38.6Z M210.7 56.0H190.8Q191.0 58.5 192.2 59.7Q193.4 60.9 195.3 60.9Q197.9 60.9 199.0 58.6H210.2Q209.5 61.7 207.5 64.1Q205.5 66.5 202.5 67.9Q199.4 69.3 195.7 69.3Q191.3 69.3 187.8 67.4Q184.3 65.6 182.4 62.1Q180.4 58.6 180.4 53.9Q180.4 49.2 182.4 45.7Q184.3 42.3 187.7 40.4Q191.2 38.5 195.7 38.5Q200.1 38.5 203.6 40.3Q207.0 42.2 208.9 45.6Q210.9 49.0 210.9 53.6Q210.9 54.8 210.7 56.0ZM200.1 50.9Q200.1 49.0 198.9 47.9Q197.6 46.8 195.6 46.8Q193.7 46.8 192.5 47.9Q191.3 48.9 190.9 50.9Z M213.2 58.8H223.4Q223.6 60.3 224.7 61.1Q225.8 61.9 227.5 61.9Q228.8 61.9 229.5 61.3Q230.3 60.8 230.3 59.9Q230.3 58.8 229.0 58.3Q227.8 57.7 225.0 57.1Q221.7 56.5 219.6 55.7Q217.5 54.9 215.9 53.0Q214.3 51.2 214.3 48.1Q214.3 45.4 215.7 43.3Q217.2 41.1 220.0 39.8Q222.8 38.5 226.8 38.5Q232.7 38.5 236.1 41.4Q239.4 44.3 240.0 49.0H230.5Q230.2 47.6 229.2 46.8Q228.2 46.0 226.6 46.0Q225.3 46.0 224.6 46.5Q223.9 47.0 223.9 47.8Q223.9 48.9 225.2 49.5Q226.4 50.0 229.1 50.6Q232.4 51.3 234.6 52.2Q236.8 53.0 238.4 54.9Q240.0 56.8 240.0 60.1Q240.0 62.7 238.5 64.8Q237.0 66.9 234.2 68.1Q231.3 69.3 227.5 69.3Q223.5 69.3 220.3 68.0Q217.1 66.6 215.2 64.2Q213.4 61.8 213.2 58.8Z M262.5 60.0V69.0H257.9Q246.4 69.0 246.4 57.5V47.6H242.7V38.9H246.4V31.6H257.0V38.9H262.4V47.6H257.0V57.7Q257.0 58.9 257.5 59.5Q258.1 60.0 259.4 60.0Z M265.2 53.9Q265.2 49.2 267.2 45.7Q269.3 42.3 272.9 40.4Q276.4 38.5 280.9 38.5Q285.4 38.5 289.0 40.4Q292.5 42.3 294.6 45.7Q296.7 49.2 296.7 53.9Q296.7 58.6 294.6 62.1Q292.5 65.6 289.0 67.4Q285.4 69.3 280.9 69.3Q276.4 69.3 272.8 67.4Q269.2 65.6 267.2 62.1Q265.2 58.6 265.2 53.9ZM286.0 53.9Q286.0 50.8 284.5 49.2Q283.1 47.6 280.9 47.6Q278.8 47.6 277.3 49.2Q275.9 50.8 275.9 53.9Q275.9 57.0 277.3 58.6Q278.7 60.2 280.9 60.2Q283.1 60.2 284.5 58.6Q286.0 56.9 286.0 53.9Z"/><path fill="#E53935" d="M316.2 56.2H311.0V69.0H300.5V31.2H316.2Q320.8 31.2 324.0 32.8Q327.2 34.4 328.8 37.2Q330.4 40.1 330.4 43.8Q330.4 47.2 328.8 50.0Q327.2 52.8 324.0 54.5Q320.8 56.2 316.2 56.2ZM319.7 43.8Q319.7 39.6 315.2 39.6H311.0V47.8H315.2Q319.7 47.8 319.7 43.8Z M354.4 38.6V49.8H351.5Q348.0 49.8 346.4 51.2Q344.7 52.5 344.7 55.8V69.0H334.2V38.9H344.7V44.2Q346.5 41.6 349.0 40.1Q351.5 38.6 354.4 38.6Z M356.0 53.9Q356.0 49.2 358.1 45.7Q360.1 42.3 363.7 40.4Q367.3 38.5 371.8 38.5Q376.3 38.5 379.8 40.4Q383.4 42.3 385.5 45.7Q387.5 49.2 387.5 53.9Q387.5 58.6 385.5 62.1Q383.4 65.6 379.8 67.4Q376.2 69.3 371.7 69.3Q367.2 69.3 363.6 67.4Q360.1 65.6 358.0 62.1Q356.0 58.6 356.0 53.9ZM376.9 53.9Q376.9 50.8 375.4 49.2Q373.9 47.6 371.8 47.6Q369.6 47.6 368.2 49.2Q366.7 50.8 366.7 53.9Q366.7 57.0 368.1 58.6Q369.5 60.2 371.7 60.2Q373.9 60.2 375.4 58.6Q376.9 56.9 376.9 53.9Z M422.4 51.4V69.0H411.9V52.8Q411.9 50.2 410.5 48.8Q409.2 47.3 406.9 47.3Q404.6 47.3 403.2 48.8Q401.9 50.2 401.9 52.8V69.0H391.4V38.9H401.9V43.2Q403.3 41.1 405.6 39.9Q408.0 38.6 411.1 38.6Q416.2 38.6 419.3 42.1Q422.4 45.5 422.4 51.4Z M445.5 60.0V69.0H440.9Q429.4 69.0 429.4 57.5V47.6H425.7V38.9H429.4V31.6H439.9V38.9H445.4V47.6H439.9V57.7Q439.9 58.9 440.5 59.5Q441.1 60.0 442.4 60.0Z M448.1 53.9Q448.1 49.2 450.2 45.7Q452.3 42.3 455.8 40.4Q459.4 38.5 463.9 38.5Q468.4 38.5 472.0 40.4Q475.5 42.3 477.6 45.7Q479.7 49.2 479.7 53.9Q479.7 58.6 477.6 62.1Q475.5 65.6 471.9 67.4Q468.3 69.3 463.8 69.3Q459.3 69.3 455.8 67.4Q452.2 65.6 450.2 62.1Q448.1 58.6 448.1 53.9ZM469.0 53.9Q469.0 50.8 467.5 49.2Q466.0 47.6 463.9 47.6Q461.8 47.6 460.3 49.2Q458.9 50.8 458.9 53.9Q458.9 57.0 460.3 58.6Q461.6 60.2 463.8 60.2Q466.0 60.2 467.5 58.6Q469.0 56.9 469.0 53.9Z"/></svg>
+    <div class="ctx"><b>Consola</b><span id="t-usuario"></span></div>
+    <button type="button" id="b-salir">Salir</button>
+  </header>
+  <nav class="tabs" id="tabs">
+    <button data-tab="resumen" class="on">Resumen</button>
+    <button data-tab="negocios">Negocios</button>
+    <button data-tab="equipo">Equipo</button>
+    <button data-tab="bitacora">Bitácora</button>
+  </nav>
+  <main>
+    <section id="tab-resumen"></section>
+    <section id="tab-negocios" hidden></section>
+    <section id="tab-ficha" hidden></section>
+    <section id="tab-equipo" hidden></section>
+    <section id="tab-bitacora" hidden></section>
+  </main>
+</div>
+
+<dialog id="dlg"><form method="dialog" id="dlg-form" novalidate>
+  <div class="dh"><h2 id="dlg-t"></h2><button class="btn sm" value="cancel" formnovalidate>Cerrar</button></div>
+  <div class="db" id="dlg-b"></div>
+  <div class="df" id="dlg-f"></div>
+</form></dialog>
+
+<div id="toast" hidden></div>
+<div id="cargando" hidden><div class="spin"></div></div>
+
+<script>
+'use strict';
+/* ================= Utilidades ================= */
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+const CLP=new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0});
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pesos=v=>(v===''||v==null||isNaN(Number(v)))?'':CLP.format(Number(v));
+const PLANES={WEB:'Solo web',WEB_PEDIDOS:'Web más pedidos',COMPLETO:'Completo'};
+const ROLES={SUPERADMIN:'PrestoPronto',DUENO:'Dueño',ENCARGADO:'Encargado',COCINA:'Cocina',REPARTIDOR:'Repartidor'};
+const ESTADOS={ACTIVO:'Activo',SUSPENDIDO:'Suspendido',BAJA:'De baja'};
+function fecha(v){ if(!v) return ''; const d=new Date(v); return isNaN(d)?'':d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function fechaHora(v){ if(!v) return ''; const d=new Date(v); return isNaN(d)?'':d.toLocaleString('es-CL',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+function iso(v){ if(!v) return ''; const d=new Date(v); if(isNaN(d)) return ''; const z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`; }
+function hoyIso(dias){ const d=new Date(); d.setDate(d.getDate()+(dias||0)); return iso(d); }
+function pill(e){ return `<span class="pill p-${esc(e)}"><i></i>${esc(ESTADOS[e]||e)}</span>`; }
+function toast(m,err){ const t=$('#toast'); t.textContent=m; t.className=err?'err':''; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,err?6500:3000); }
+function cargando(on){ $('#cargando').hidden=!on; }
+async function tarea(fn, ok){ cargando(true); try{ const r=await fn(); if(ok) toast(ok); return r; } catch(e){ toast(e.message,true); throw e; } finally{ cargando(false); } }
+function urlSitio(){ return new URL('../sitio/', location.href).href; }
+function urlWeb(slug){ return new URL('../web/?n='+encodeURIComponent(slug), location.href).href; }
+function val(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
+
+/* Diálogo genérico: devuelve una promesa que se resuelve con el botón presionado */
+function dialogo(titulo, cuerpo, botones){
+  $('#dlg-t').textContent=titulo; $('#dlg-b').innerHTML=cuerpo;
+  $('#dlg-f').innerHTML=(botones||[]).map(b=>`<button type="button" class="btn ${b.clase||''}" data-v="${b.v}">${esc(b.t)}</button>`).join('');
+  const d=$('#dlg'); if(!d.open) d.showModal();
+  return new Promise(res=>{
+    $('#dlg-f').onclick=e=>{ const b=e.target.closest('[data-v]'); if(b) res(b.dataset.v); };
+    d.onclose=()=>{ if(d.dataset.ignorar){ delete d.dataset.ignorar; return; } res('cancel'); };
+  });
+}
+/* Cierre hecho por el programa: el evento close llega después y no debe contarse como cancelar */
+function cerrarDialogo(){ const d=$('#dlg'); if(d.open){ d.dataset.ignorar='1'; d.close(); } }
+function errorEnDialogo(m){ let e=$('#dlg-err'); if(!e){ $('#dlg-b').insertAdjacentHTML('beforeend','<div id="dlg-err" class="aviso err mt"></div>'); e=$('#dlg-err'); } e.textContent=m; }
+
+/* Muestra una credencial recién creada, con un mensaje listo para enviar */
+function mostrarAcceso(a){
+  const esPin=!!a.pin;
+  const msj = esPin
+    ? `Hola ${a.nombre}, tu acceso a PrestoPronto (${ROLES[a.rol]}):\nNegocio: ${a.negocio}\nPIN: ${a.pin}\nNo lo compartas con nadie.`
+    : `Hola ${a.nombre}, tu acceso a PrestoPronto:\nIngresa en ${a.rol==='SUPERADMIN'?location.href:urlSitio()}\nCorreo: ${a.email}\nClave temporal: ${a.clave}\nTe pedirá crear tu propia clave al entrar.`;
+  return dialogo('Acceso de '+a.nombre, `
+    <div class="credencial">${esPin?`PIN de ${esc(ROLES[a.rol])}<br><code>${esc(a.pin)}</code>`:`Correo: <b>${esc(a.email)}</b><br>Clave temporal: <code>${esc(a.clave)}</code>`}</div>
+    <p class="muted">Esta es la única vez que se muestra. Entrégalo por un canal privado; nadie, ni siquiera PrestoPronto, podrá volver a verlo.</p>
+    <label class="f">Mensaje listo para copiar<div class="msj" id="msj-acceso">${esc(msj)}</div></label>`,
+    [{t:'Copiar mensaje',v:'copiar'},{t:'Listo',v:'ok',clase:'pri'}]).then(async v=>{
+      if(v==='copiar'){ try{ await navigator.clipboard.writeText(msj); toast('Mensaje copiado.'); }catch(e){ toast('No se pudo copiar; selecciona el texto.',true); } return mostrarAcceso(a); }
+      cerrarDialogo();
+    });
+}
+
+/* ================= Ingreso ================= */
+let PERFIL=null;
+function verIngreso(msg){
+  PERFIL=null; $('#v-app').hidden=true; $('#v-login').hidden=false; $('#f-ingreso').hidden=false; $('#f-cambio').hidden=true;
+  $('#l-clave').value=''; $('#l-msg').innerHTML=msg?`<div class="aviso err">${esc(msg)}</div>`:'';
+}
+async function abrir(perfil){
+  PERFIL=perfil;
+  if(perfil.debe_cambiar_clave){ $('#f-ingreso').hidden=true; $('#f-cambio').hidden=false; $('#v-login').hidden=false; $('#v-app').hidden=true; return; }
+  if(perfil.usuario.rol!=='SUPERADMIN'){ await PP_API.salir(); verIngreso('Esta cuenta no tiene acceso a la Consola.'); return; }
+  $('#t-usuario').textContent=perfil.usuario.nombre+' · '+perfil.usuario.email;
+  $('#v-login').hidden=true; $('#v-app').hidden=false;
+  irA('resumen');
+}
+$('#frm-ingreso').addEventListener('submit',async e=>{
+  e.preventDefault(); const em=val('l-email'), cl=$('#l-clave').value;
+  if(!em||!cl){ $('#l-msg').innerHTML='<div class="aviso err">Ingresa tu correo y tu clave.</div>'; return; }
+  cargando(true); $('#l-msg').innerHTML='';
+  try{ await abrir(await PP_API.ingresar(em,cl)); }catch(err){ $('#l-msg').innerHTML=`<div class="aviso err">${esc(err.message)}</div>`; } finally{ cargando(false); }
+});
+$('#frm-cambio').addEventListener('submit',async e=>{
+  e.preventDefault(); const a=$('#c-actual').value,n=$('#c-nueva').value,n2=$('#c-nueva2').value;
+  const m=t=>{ $('#c-msg').innerHTML=`<div class="aviso err">${esc(t)}</div>`; };
+  if(!a||!n) return m('Completa los tres campos.'); if(n!==n2) return m('Las dos claves nuevas no coinciden.');
+  if(n.length<8||!/[A-Za-z]/.test(n)||!/\d/.test(n)) return m('La nueva clave debe tener al menos 8 caracteres, con letras y números.');
+  cargando(true); try{ await abrir(await PP_API.cambiarClave(a,n)); toast('Clave actualizada.'); }catch(err){ m(err.message); } finally{ cargando(false); }
+});
+$('#b-salir').addEventListener('click',async()=>{ cargando(true); await PP_API.salir(); cargando(false); verIngreso(''); });
+
+/* ================= Navegación ================= */
+const SECCIONES=['resumen','negocios','ficha','equipo','bitacora'];
+function irA(tab){
+  $$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===(tab==='ficha'?'negocios':tab)));
+  SECCIONES.forEach(s=>$('#tab-'+s).hidden=s!==tab);
+  ({resumen:verResumen,negocios:verNegocios,equipo:verEquipo,bitacora:verBitacora})[tab]?.();
+}
+$('#tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-tab]'); if(b) irA(b.dataset.tab); });
+
+/* ================= Resumen ================= */
+async function verResumen(){
+  const c=$('#tab-resumen'); c.innerHTML='<div class="vacio">Cargando…</div>';
+  let r; try{ r=await PP_API.resumenConsola(); }catch(e){ c.innerHTML=`<div class="aviso err">${esc(e.message)}</div>`; return; }
+  const ic={PAGO:'$',TESTIMONIO:'★',TRUEQUE:'⇄',CONSUMO:'⏳'};
+  c.innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><span>Activos</span><b>${r.totales.activos}</b></div>
+      <div class="kpi"><span>Suspendidos</span><b>${r.totales.suspendidos}</b></div>
+      <div class="kpi"><span>De baja</span><b>${r.totales.baja}</b></div>
+      <div class="kpi"><span>Cobrado en dinero</span><b class="num">${pesos(r.recaudado.dinero)}</b></div>
+      <div class="kpi"><span>Cobrado en trueque</span><b class="num">${pesos(r.recaudado.trueque)}</b></div>
+    </div>
+    <div class="dos">
+      <div class="panel"><div class="row" style="margin-bottom:6px"><h2 style="margin:0">Requiere atención</h2><span class="spacer"></span>
+        ${r.por_plan.map(p=>`<span class="chip">${esc(PLANES[p.plan])}: ${p.cantidad}</span>`).join(' ')}</div>
+        ${r.alertas.length?r.alertas.map(a=>`<div class="alerta ${a.tipo}" data-neg="${esc(a.negocio_id)}"><span class="ic">${ic[a.tipo]}</span><div><b>${esc(a.nombre)}</b><small>${esc(a.texto)}</small></div></div>`).join('')
+          :'<div class="vacio">Todo al día. No hay pagos atrasados, testimonios pendientes ni trueques por vencer.</div>'}
+      </div>
+      <div class="panel"><h2>Últimos movimientos</h2>
+        ${r.movimientos.length?`<div class="tw"><table class="t"><tbody>${r.movimientos.map(b=>`<tr><td class="muted" style="white-space:nowrap">${fechaHora(b.fecha)}</td><td><b>${esc(b.accion)}</b><br><small class="muted">${esc(b.usuario_nombre)}${b.soporte==='SI'?' (soporte)':''} · ${esc(b.detalle)}</small></td></tr>`).join('')}</tbody></table></div>`:'<div class="vacio">Sin movimientos.</div>'}
+      </div>
+    </div>`;
+  c.querySelectorAll('[data-neg]').forEach(a=>a.onclick=()=>abrirFicha(a.dataset.neg,'cobro'));
+}
+
+/* ================= Negocios ================= */
+let LISTA=[];
+async function verNegocios(){
+  const c=$('#tab-negocios');
+  c.innerHTML=`<div class="toolbar">
+      <label class="f">Buscar<input type="search" id="n-q" placeholder="Nombre, comuna o dirección web"></label>
+      <label class="f">Estado<select id="n-est"><option value="">Todos</option><option value="ACTIVO">Activos</option><option value="SUSPENDIDO">Suspendidos</option><option value="BAJA">De baja</option></select></label>
+      <label class="f">Plan<select id="n-plan"><option value="">Todos</option>${Object.entries(PLANES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
+      <button class="btn pri" type="button" id="b-nuevo-neg">Nuevo negocio</button></div>
+    <div id="n-lista"><div class="vacio">Cargando…</div></div>`;
+  ['n-q','n-est','n-plan'].forEach(id=>$('#'+id).addEventListener('input',pintarLista));
+  $('#b-nuevo-neg').onclick=asistenteNegocio;
+  try{ LISTA=await PP_API.listarNegocios(); pintarLista(); }catch(e){ $('#n-lista').innerHTML=`<div class="aviso err">${esc(e.message)}</div>`; }
+}
+function pintarLista(){
+  const q=val('n-q').toLowerCase(), est=val('n-est'), plan=val('n-plan');
+  const L=LISTA.filter(n=>(!est||n.estado_servicio===est)&&(!plan||n.plan===plan)&&(!q||[n.nombre,n.comuna,n.slug].join(' ').toLowerCase().includes(q)));
+  if(!L.length){ $('#n-lista').innerHTML='<div class="vacio panel">No hay negocios con esos filtros.</div>'; return; }
+  $('#n-lista').innerHTML=`<div class="tw"><table class="t"><thead><tr><th>Negocio</th><th>Plan</th><th>Estado</th><th class="n">Tarifa</th><th>Pagado hasta</th><th>Avisos</th></tr></thead><tbody>
+    ${L.map(n=>{ const c=n.comercial; const av=[c.atrasado?`<span class="chip err">Atraso ${c.dias_atraso} d</span>`:'',c.testimonio_pendiente?'<span class="chip">Testimonio</span>':'',c.trueque_por_vencer?'<span class="chip warn">Trueque</span>':''].join(' ');
+      return `<tr class="click" data-neg="${esc(n.negocio_id)}"><td><b>${esc(n.nombre)}</b><br><small class="muted">${esc(n.comuna)} · /${esc(n.slug)}</small></td>
+      <td>${esc(PLANES[n.plan]||n.plan)}</td><td>${pill(n.estado_servicio)}</td><td class="n">${n.tarifa_mensual?pesos(n.tarifa_mensual):'<span class="muted">sin tarifa</span>'}</td>
+      <td>${fecha(c.pagado_hasta)||'<span class="muted">sin pagos</span>'}</td><td>${av}</td></tr>`; }).join('')}
+  </tbody></table></div>`;
+  $$('#n-lista [data-neg]').forEach(r=>r.onclick=()=>abrirFicha(r.dataset.neg));
+}
+
+/* ---------- Asistente: nuevo negocio ---------- */
+async function asistenteNegocio(){
+  const D={negocio:{},dueno:{}}; let paso=1;
+  const pasos=n=>`<div class="pasos">${[1,2,3].map(i=>`<span class="${i<=n?'on':''}"></span>`).join('')}</div>`;
+  const vistas={
+    1:()=>`${pasos(1)}<p class="muted" style="margin-top:0">Paso 1 de 3: datos del local</p><div class="grid g2">
+      <label class="f">Nombre del negocio<input id="w-nombre" value="${esc(D.negocio.nombre||'')}"></label>
+      <label class="f">Dirección web (slug)<input id="w-slug" value="${esc(D.negocio.slug||'')}" placeholder="se genera del nombre"></label>
+      <label class="f">Dirección<input id="w-dir" value="${esc(D.negocio.direccion||'')}"></label>
+      <label class="f">Comuna<input id="w-comuna" value="${esc(D.negocio.comuna||'')}"></label>
+      <label class="f">WhatsApp<input id="w-wa" value="${esc(D.negocio.whatsapp||'')}" placeholder="+56912345678"></label>
+      <label class="f">Instagram<input id="w-ig" value="${esc(D.negocio.instagram||'')}" placeholder="usuario sin @"></label></div>`,
+    2:()=>`${pasos(2)}<p class="muted" style="margin-top:0">Paso 2 de 3: plan y condiciones</p>
+      <div class="opciones">${Object.entries(PLANES).map(([k,v])=>`<label class="opcion"><input type="radio" name="w-plan" value="${k}" ${D.negocio.plan===k?'checked':''}><span><b>${v}</b><small>${{WEB:'Carta, WhatsApp y redes',WEB_PEDIDOS:'Retiro y delivery con seguimiento',COMPLETO:'Cocina, reparto, CRM e informes'}[k]}</small></span></label>`).join('')}</div>
+      <div class="grid g2 mt"><label class="f">Tarifa mensual (pesos)<input id="w-tarifa" inputmode="numeric" value="${esc(D.negocio.tarifa_mensual||'')}" placeholder="Vacío si aún no se define"></label>
+      <label class="f">Trueque hasta (opcional)<input type="date" id="w-trueque" value="${esc(D.negocio.trueque_hasta||'')}"></label></div>
+      <p class="muted" style="font-size:13px">Desde el día 30 de uso, el negocio debe publicar un testimonio en sus redes a favor de PrestoPronto, sin costo. La Consola te avisará.</p>`,
+    3:()=>`${pasos(3)}<p class="muted" style="margin-top:0">Paso 3 de 3: cuenta del dueño, propietario o gerente</p><div class="grid g2">
+      <label class="f">Nombre<input id="w-dn" value="${esc(D.dueno.nombre||'')}"></label>
+      <label class="f">Correo (será su usuario)<input type="email" id="w-de" value="${esc(D.dueno.email||'')}"></label>
+      <label class="f">Teléfono<input id="w-dt" value="${esc(D.dueno.telefono||'')}"></label></div>
+      <p class="muted" style="font-size:13px">Al crear el negocio se genera una clave temporal para el dueño. Se muestra una sola vez.</p>`
+  };
+  const leerPaso=()=>{
+    if(paso===1) Object.assign(D.negocio,{nombre:val('w-nombre'),slug:val('w-slug'),direccion:val('w-dir'),comuna:val('w-comuna'),whatsapp:val('w-wa'),instagram:val('w-ig').replace(/^@/,'')});
+    if(paso===2) Object.assign(D.negocio,{plan:(document.querySelector('input[name=w-plan]:checked')||{}).value||'',tarifa_mensual:val('w-tarifa'),trueque_hasta:val('w-trueque')});
+    if(paso===3) Object.assign(D.dueno,{nombre:val('w-dn'),email:val('w-de'),telefono:val('w-dt')});
+  };
+  const validar=()=>{
+    if(paso===1&&!D.negocio.nombre) return 'Escribe el nombre del negocio.';
+    if(paso===2&&!D.negocio.plan) return 'Elige un plan.';
+    if(paso===3&&(!D.dueno.nombre||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(D.dueno.email))) return 'Escribe el nombre y un correo válido del dueño.';
+    return '';
+  };
+  let error='';
+  while(true){
+    const cuerpo=vistas[paso]()+(error?`<div id="dlg-err" class="aviso err mt">${esc(error)}</div>`:'');
+    const v=await dialogo('Nuevo negocio',cuerpo,[paso>1?{t:'Atrás',v:'atras'}:null,{t:paso<3?'Siguiente':'Crear negocio',v:'sig',clase:'pri'}].filter(Boolean));
+    if(v==='cancel') return;
+    leerPaso(); error='';
+    if(v==='atras'){ paso--; continue; }
+    error=validar(); if(error) continue;
+    if(paso<3){ paso++; continue; }
+    try{
+      cargando(true);
+      const r=await PP_API.crearNegocio(D.negocio,D.dueno);
+      cargando(false); cerrarDialogo();
+      toast('Negocio creado.');
+      await mostrarAcceso(Object.assign({},r.acceso));
+      abrirFicha(r.negocio_id);
+      return;
+    }catch(e){ cargando(false); error=e.message; }
+  }
+}
+
+/* ================= Ficha del negocio ================= */
+let FICHA=null, SUBTAB='datos';
+async function abrirFicha(id, sub){
+  if(sub) SUBTAB=sub;
+  irA('ficha');
+  const c=$('#tab-ficha'); c.innerHTML='<div class="vacio">Cargando…</div>';
+  try{ FICHA=await PP_API.obtenerNegocio(id); }catch(e){ c.innerHTML=`<div class="aviso err">${esc(e.message)}</div>`; return; }
+  pintarFicha();
+}
+function pintarFicha(){
+  const n=FICHA.negocio, est=n.estado_servicio||'ACTIVO';
+  $('#tab-ficha').innerHTML=`
+    <button class="btn sm" type="button" id="f-volver">← Negocios</button>
+    <div class="ficha-cab mt"><div style="flex:1;min-width:220px"><div class="row"><h1>${esc(n.nombre)}</h1>${pill(est)}</div>
+      <div class="sub">${esc(PLANES[n.plan]||n.plan)} · /${esc(n.slug)} · código ${esc(n.negocio_id)} · ${FICHA.productos} productos · alta ${fecha(n.fecha_alta)}</div>
+      ${est!=='ACTIVO'&&n.motivo_estado?`<div class="aviso warn mt">Motivo: ${esc(n.motivo_estado)} (desde ${fecha(n.fecha_estado)})</div>`:''}</div>
+      <div class="row">
+        <button class="btn azul" type="button" id="f-soporte" ${est==='BAJA'?'disabled':''}>Entrar como el negocio</button>
+        ${est==='ACTIVO'?'<button class="btn" type="button" data-estado="SUSPENDIDO">Suspender</button>':'<button class="btn" type="button" data-estado="ACTIVO">Reactivar</button>'}
+        ${est!=='BAJA'?'<button class="btn danger" type="button" data-estado="BAJA">Dar de baja</button>':''}
+      </div></div>
+    <div class="subtabs" id="subtabs">${[['datos','Datos'],['cobro','Plan y cobro'],['usuarios','Usuarios'],['sitio','Sitio'],['historial','Historial']].map(([k,t])=>`<button type="button" data-sub="${k}" class="${SUBTAB===k?'on':''}">${t}</button>`).join('')}</div>
+    <div id="sub"></div>`;
+  $('#f-volver').onclick=()=>irA('negocios');
+  $('#f-soporte').onclick=entrarComo;
+  $$('[data-estado]').forEach(b=>b.onclick=()=>cambiarEstado(b.dataset.estado));
+  $('#subtabs').onclick=e=>{ const b=e.target.closest('[data-sub]'); if(!b) return; SUBTAB=b.dataset.sub; pintarFicha(); };
+  ({datos:subDatos,cobro:subCobro,usuarios:subUsuarios,sitio:subSitio,historial:subHistorial})[SUBTAB]();
+}
+async function recargarFicha(){ FICHA=await PP_API.obtenerNegocio(FICHA.negocio.negocio_id); pintarFicha(); }
+
+async function entrarComo(){
+  const w=window.open('about:blank','_blank');
+  try{
+    await tarea(()=>PP_API.entrarComoNegocio(FICHA.negocio.negocio_id));
+    if(w){ w.location.href=urlSitio(); toast('Se abrió el panel del negocio en otra pestaña.'); }
+    else toast('Tu navegador bloqueó la pestaña nueva. Permite ventanas emergentes para este sitio.',true);
+  }catch(e){ if(w) w.close(); }
+}
+
+async function cambiarEstado(estado){
+  const n=FICHA.negocio;
+  const txt={SUSPENDIDO:['Suspender '+n.nombre,'La web no aceptará pedidos y el panel del negocio quedará en solo lectura. Podrás reactivarlo cuando quieras.','Suspender'],
+    ACTIVO:['Reactivar '+n.nombre,'El negocio vuelve a operar con normalidad.','Reactivar'],
+    BAJA:['Dar de baja '+n.nombre,'Se cierran todas las sesiones del negocio y nadie podrá ingresar. Los datos se conservan.','Dar de baja']}[estado];
+  let v=await dialogo(txt[0],`<p>${txt[1]}</p>${estado!=='ACTIVO'?'<label class="f">Motivo (queda en la bitácora)<textarea id="e-motivo"></textarea></label>':''}`,[{t:'Cancelar',v:'cancel'},{t:txt[2],v:'ok',clase:estado==='ACTIVO'?'pri':'dark'}]);
+  while(v==='ok'){
+    try{ cargando(true); await PP_API.cambiarEstadoNegocio(n.negocio_id,estado,val('e-motivo')); cargando(false); cerrarDialogo(); toast('Estado actualizado.'); await recargarFicha(); return; }
+    catch(e){ cargando(false); errorEnDialogo(e.message); v=await new Promise(r=>{ $('#dlg-f').onclick=ev=>{ const b=ev.target.closest('[data-v]'); if(b) r(b.dataset.v); }; const d=$('#dlg'); d.onclose=()=>{ if(d.dataset.ignorar){ delete d.dataset.ignorar; return; } r('cancel'); }; }); }
+  }
+  cerrarDialogo();
+}
+
+/* ---------- Datos ---------- */
+function campo(id,etq,v,tipo){ return `<label class="f">${etq}<input id="${id}" type="${tipo||'text'}" value="${esc(v==null?'':v)}"></label>`; }
+function subDatos(){
+  const n=FICHA.negocio;
+  $('#sub').innerHTML=`<div class="panel"><div class="grid g2">
+    ${campo('d-nombre','Nombre',n.nombre)}${campo('d-direccion','Dirección',n.direccion)}${campo('d-comuna','Comuna',n.comuna)}
+    ${campo('d-whatsapp','WhatsApp',n.whatsapp)}${campo('d-telefono','Teléfono',n.telefono)}${campo('d-instagram','Instagram',n.instagram)}
+    ${campo('d-horario','Horario',n.horario)}${campo('d-pedido','Pedido mínimo (pesos)',n.pedido_minimo)}
+    ${campo('d-lat','Latitud del local',n.lat)}${campo('d-lng','Longitud del local',n.lng)}</div>
+    <p class="muted" style="font-size:13px">Las coordenadas se copian desde Google Maps (clic derecho sobre el local). Son la base del cálculo de anillos y despacho.</p>
+    <div class="row"><span class="spacer"></span><button class="btn pri" type="button" id="d-guardar">Guardar datos</button></div></div>`;
+  $('#d-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,nombre:val('d-nombre'),direccion:val('d-direccion'),comuna:val('d-comuna'),
+    whatsapp:val('d-whatsapp'),telefono:val('d-telefono'),instagram:val('d-instagram').replace(/^@/,''),horario:val('d-horario'),pedido_minimo:val('d-pedido'),lat:val('d-lat'),lng:val('d-lng')}); await recargarFicha(); },'Datos guardados.');
+}
+
+/* ---------- Plan y cobro ---------- */
+function subCobro(){
+  const n=FICHA.negocio, c=FICHA.comercial, k=c.consumo;
+  $('#sub').innerHTML=`
+    <div class="panel"><h2>Plan</h2><div class="grid g3">
+      <label class="f">Plan<select id="p-plan">${Object.entries(PLANES).map(([kk,v])=>`<option value="${kk}" ${n.plan===kk?'selected':''}>${v}</option>`).join('')}</select></label>
+      ${campo('p-tarifa','Tarifa mensual (pesos)',n.tarifa_mensual)}
+      <div class="f" style="justify-content:flex-end;display:flex"><button class="btn pri" type="button" id="p-guardar">Guardar plan</button></div></div></div>
+    <div class="panel"><h2>Estado de pagos</h2><div class="cifras">
+      <div class="cifra"><span>Pagado hasta</span><b>${fecha(c.pagado_hasta)||'Sin pagos'}</b></div>
+      <div class="cifra"><span>Situación</span><b>${c.atrasado?`<span style="color:var(--err)">Atraso de ${c.dias_atraso} días</span>`:(n.tarifa_mensual?'Al día':'Sin tarifa')}</b></div>
+      <div class="cifra"><span>Cobrado en dinero</span><b class="num">${pesos(c.recaudado_dinero)}</b></div>
+      <div class="cifra"><span>Cobrado en trueque</span><b class="num">${pesos(c.recaudado_trueque)}</b></div></div>
+      <div class="row mt"><h3 style="font-size:15px">Pagos</h3><span class="spacer"></span><button class="btn pri sm" type="button" id="p-nuevo">Registrar pago</button></div>
+      <div class="mt">${FICHA.pagos.length?`<div class="tw"><table class="t"><thead><tr><th>Fecha</th><th>Tipo</th><th>Período</th><th class="n">Dinero</th><th class="n">Trueque</th><th>Detalle</th><th></th></tr></thead><tbody>
+        ${FICHA.pagos.map(p=>`<tr class="${p.estado==='ANULADO'?'anulado':''}"><td>${fecha(p.fecha)}</td><td>${esc({DINERO:'Dinero',TRUEQUE:'Trueque',MIXTO:'Mixto'}[p.tipo])}</td><td>${fecha(p.periodo_desde)} al ${fecha(p.periodo_hasta)}</td>
+          <td class="n">${pesos(p.monto_dinero)}</td><td class="n">${pesos(p.monto_trueque)}</td><td>${esc([p.medio,p.detalle].filter(Boolean).join(' · '))}${p.estado==='ANULADO'?`<br><small>Anulado: ${esc(p.motivo_anulacion)}</small>`:''}</td>
+          <td>${p.estado!=='ANULADO'?`<button class="btn sm danger" type="button" data-anular="${esc(p.pago_id)}">Anular</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<div class="vacio">Aún no hay pagos registrados.</div>'}</div></div>
+    <div class="panel"><h2>Trueque: consumo en el local</h2><div class="cifras">
+      <div class="cifra"><span>Disponible</span><b class="num">${pesos(k.disponible)}</b></div>
+      <div class="cifra"><span>Consumido</span><b class="num">${pesos(k.consumido)}</b></div>
+      <div class="cifra"><span>Vencido sin usar</span><b class="num">${pesos(k.vencido)}</b></div>
+      <div class="cifra"><span>Próximo vencimiento</span><b>${fecha(k.proximo_vence)||'No hay'}</b></div></div>
+      <div class="grid g3 mt">${campo('t-hasta','El trueque termina el',iso(n.trueque_hasta),'date')}
+        <div class="f" style="display:flex;justify-content:flex-end"><button class="btn" type="button" id="t-guardar">Guardar fecha</button></div>
+        <div class="f" style="display:flex;justify-content:flex-end"><button class="btn pri" type="button" id="k-nuevo" ${k.disponible>0?'':'disabled'}>Registrar consumo</button></div></div>
+      ${c.dias_trueque!==null&&c.dias_trueque<=15?`<div class="aviso warn mt">${c.dias_trueque<0?'El período de trueque ya terminó.':'El trueque termina en '+c.dias_trueque+' días.'} Conversa con el negocio el paso a la tarifa pagada.</div>`:''}
+      <div class="mt">${FICHA.consumos.length?`<div class="tw"><table class="t"><thead><tr><th>Fecha</th><th>Detalle</th><th class="n">Monto</th><th>Registró</th></tr></thead><tbody>
+        ${FICHA.consumos.map(x=>`<tr><td>${fecha(x.fecha)}</td><td>${esc(x.detalle)}</td><td class="n">${pesos(x.monto)}</td><td>${esc(x.registrado_por)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="vacio">Sin consumos registrados.</div>'}</div></div>
+    <div class="panel"><h2>Testimonio en redes sociales</h2>
+      <p class="muted" style="margin-top:0">Condición obligatoria y gratuita desde el día 30 de uso${c.testimonio_desde?': exigible desde el '+fecha(c.testimonio_desde):''}.</p>
+      ${c.testimonio_pendiente?'<div class="aviso warn">El plazo se cumplió y el testimonio sigue pendiente.</div>':''}
+      <div class="grid g3 mt"><label class="f">Estado<select id="ts-estado">${[['PENDIENTE','Pendiente'],['CUMPLIDO','Cumplido'],['NO_APLICA','No aplica']].map(([kk,v])=>`<option value="${kk}" ${(n.testimonio_estado||'PENDIENTE')===kk?'selected':''}>${v}</option>`).join('')}</select></label>
+      ${campo('ts-enlace','Enlace a la publicación',n.testimonio_enlace,'url')}
+      <div class="f" style="display:flex;justify-content:flex-end"><button class="btn pri" type="button" id="ts-guardar">Guardar testimonio</button></div></div></div>`;
+  $('#p-guardar').onclick=()=>tarea(async()=>{ await PP_API.cambiarPlan(n.negocio_id,val('p-plan'),val('p-tarifa')); await recargarFicha(); },'Plan actualizado.');
+  $('#t-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,trueque_hasta:val('t-hasta')}); await recargarFicha(); },'Fecha guardada.');
+  $('#ts-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,testimonio_estado:val('ts-estado'),testimonio_enlace:val('ts-enlace')}); await recargarFicha(); },'Testimonio guardado.');
+  $('#p-nuevo').onclick=dialogoPago;
+  $('#k-nuevo').onclick=dialogoConsumo;
+  $$('[data-anular]').forEach(b=>b.onclick=()=>dialogoAnular(b.dataset.anular));
+}
+async function enviarDialogo(cuerpo,titulo,boton,accion){
+  let v=await dialogo(titulo,cuerpo,[{t:'Cancelar',v:'cancel'},{t:boton,v:'ok',clase:'pri'}]);
+  while(v==='ok'){
+    try{ cargando(true); const r=await accion(); cargando(false); cerrarDialogo(); return r||true; }
+    catch(e){ cargando(false); errorEnDialogo(e.message); v=await new Promise(r=>{ $('#dlg-f').onclick=ev=>{ const b=ev.target.closest('[data-v]'); if(b) r(b.dataset.v); }; const d=$('#dlg'); d.onclose=()=>{ if(d.dataset.ignorar){ delete d.dataset.ignorar; return; } r('cancel'); }; }); }
+  }
+  cerrarDialogo(); return null;
+}
+async function dialogoPago(){
+  const n=FICHA.negocio; const desde=FICHA.comercial.pagado_hasta?iso(new Date(new Date(FICHA.comercial.pagado_hasta).getTime()+86400000)):hoyIso();
+  const hasta=iso(new Date(new Date(desde+'T12:00').getTime()+29*86400000));
+  const html=`<div class="opciones">${[['DINERO','Dinero','Transferencia, efectivo o tarjeta'],['TRUEQUE','Trueque','Consumo en el local'],['MIXTO','Mixto','Parte en dinero y parte en consumo']].map(([k,t,s],i)=>`<label class="opcion"><input type="radio" name="g-tipo" value="${k}" ${i?'':'checked'}><span><b>${t}</b><small>${s}</small></span></label>`).join('')}</div>
+    <div class="grid g2 mt">
+      <label class="f" id="g-w-din">Monto en dinero<input id="g-din" inputmode="numeric" placeholder="$"></label>
+      <label class="f" id="g-w-medio">Medio de pago<select id="g-medio"><option>Transferencia</option><option>Efectivo</option><option>Tarjeta</option><option>Otro</option></select></label>
+      <label class="f" id="g-w-tru" hidden>Valor del consumo en pesos<input id="g-tru" inputmode="numeric" placeholder="$"></label>
+      <label class="f" id="g-w-vence" hidden>El consumo vence el<input type="date" id="g-vence" value="${hoyIso(90)}"></label>
+      ${campo('g-desde','Cubre desde',desde,'date')}${campo('g-hasta','Cubre hasta',hasta,'date')}
+      ${campo('g-fecha','Fecha del pago',hoyIso(),'date')}</div>
+    <label class="f mt">Detalle${'<textarea id="g-det" placeholder="Ej.: consumo en el local equivalente a un mes"></textarea>'}</label>`;
+  const p=enviarDialogo(html,'Registrar pago de '+n.nombre,'Registrar pago',()=>PP_API.registrarPago({negocio_id:n.negocio_id,tipo:(document.querySelector('input[name=g-tipo]:checked')||{}).value,
+    monto_dinero:val('g-din'),monto_trueque:val('g-tru'),medio:val('g-medio'),vence_consumo:val('g-vence'),periodo_desde:val('g-desde'),periodo_hasta:val('g-hasta'),fecha:val('g-fecha'),detalle:val('g-det')}));
+  const sync=()=>{ const t=(document.querySelector('input[name=g-tipo]:checked')||{}).value; ['din','medio'].forEach(x=>$('#g-w-'+x).hidden=t==='TRUEQUE'); ['tru','vence'].forEach(x=>$('#g-w-'+x).hidden=t==='DINERO'); };
+  $$('input[name=g-tipo]').forEach(r=>r.onchange=sync); sync();
+  if(await p){ toast('Pago registrado.'); await recargarFicha(); }
+}
+async function dialogoConsumo(){
+  const n=FICHA.negocio;
+  const html=`<p class="muted" style="margin-top:0">Saldo disponible: <b>${pesos(FICHA.comercial.consumo.disponible)}</b></p><div class="grid g2">
+    ${campo('k-monto','Monto consumido (pesos)','')}${campo('k-fecha','Fecha',hoyIso(),'date')}</div>
+    <label class="f mt">Detalle<textarea id="k-det" placeholder="Ej.: almuerzo de reunión, 3 promociones"></textarea></label>`;
+  if(await enviarDialogo(html,'Registrar consumo','Registrar',()=>PP_API.registrarConsumo({negocio_id:n.negocio_id,monto:val('k-monto'),fecha:val('k-fecha'),detalle:val('k-det')}))){ toast('Consumo registrado.'); await recargarFicha(); }
+}
+async function dialogoAnular(id){
+  if(await enviarDialogo('<p>El pago quedará marcado como anulado, sin borrarse, y no contará para el período ni para el saldo.</p><label class="f">Motivo<textarea id="a-mot"></textarea></label>','Anular pago','Anular',()=>PP_API.anularPago(id,val('a-mot')))){ toast('Pago anulado.'); await recargarFicha(); }
+}
+
+/* ---------- Usuarios ---------- */
+function subUsuarios(){
+  const U=FICHA.usuarios;
+  $('#sub').innerHTML=`<div class="panel"><div class="row"><h2 style="margin:0">Personas con acceso</h2><span class="spacer"></span><button class="btn pri sm" type="button" id="u-nuevo">Agregar persona</button></div>
+    <div class="mt">${U.length?`<div class="tw"><table class="t"><thead><tr><th>Nombre</th><th>Rol</th><th>Ingreso</th><th>Último ingreso</th><th>Estado</th><th></th></tr></thead><tbody>
+      ${U.map(u=>`<tr><td><b>${esc(u.nombre)}</b>${u.telefono?`<br><small class="muted">${esc(u.telefono)}</small>`:''}</td><td>${esc(ROLES[u.rol])}</td>
+        <td>${u.email?esc(u.email):'<span class="muted">PIN</span>'}</td><td>${fechaHora(u.ultimo_ingreso)||'<span class="muted">nunca</span>'}</td>
+        <td>${u.activo==='NO'?'<span class="chip">Desactivado</span>':u.bloqueado?'<span class="chip err">Bloqueado</span>':u.debe_cambiar_clave==='SI'?'<span class="chip warn">Clave temporal</span>':'<span class="chip ok">Activo</span>'}</td>
+        <td><div class="row"><button class="btn sm" type="button" data-u="reset" data-id="${u.usuario_id}">Restablecer acceso</button>
+          <button class="btn sm" type="button" data-u="sesiones" data-id="${u.usuario_id}">Cerrar sesiones</button>
+          <button class="btn sm ${u.activo==='NO'?'':'danger'}" type="button" data-u="${u.activo==='NO'?'activar':'desactivar'}" data-id="${u.usuario_id}">${u.activo==='NO'?'Reactivar':'Desactivar'}</button></div></td></tr>`).join('')}
+    </tbody></table></div>`:'<div class="vacio">Este negocio aún no tiene personas con acceso.</div>'}</div>
+    <p class="muted" style="font-size:13px">Dueño y encargado ingresan con correo y clave. Cocina y repartidores ingresan con un PIN de 6 dígitos.</p></div>`;
+  $('#u-nuevo').onclick=()=>dialogoUsuario(FICHA.negocio.negocio_id);
+  $$('[data-u]').forEach(b=>b.onclick=()=>accionUsuario(b.dataset.u,b.dataset.id));
+}
+async function accionUsuario(acc,id){
+  try{
+    if(acc==='reset'){ const a=await tarea(()=>PP_API.restablecerAcceso(id)); await mostrarAcceso(a); }
+    if(acc==='sesiones'){ const r=await tarea(()=>PP_API.cerrarSesionesUsuario(id)); toast(r.cerradas?`Se cerraron ${r.cerradas} sesiones.`:'No tenía sesiones abiertas.'); }
+    if(acc==='desactivar'||acc==='activar') await tarea(()=>PP_API.actualizarUsuario({usuario_id:id,activo:acc==='activar'?'SI':'NO'}),acc==='activar'?'Persona reactivada.':'Persona desactivada.');
+    if(FICHA&&!$('#tab-ficha').hidden) await recargarFicha(); else verEquipo();
+  }catch(e){}
+}
+async function dialogoUsuario(neg){
+  const esEquipo=!neg;
+  const html=`<div class="grid g2">
+    ${esEquipo?'':`<label class="f">Rol<select id="u-rol"><option value="DUENO">Dueño, propietario o gerente</option><option value="ENCARGADO">Encargado</option><option value="COCINA">Cocina (PIN)</option><option value="REPARTIDOR">Repartidor (PIN)</option></select></label>`}
+    ${campo('u-nombre','Nombre','')}<span id="u-w-email">${campo('u-email','Correo (será su usuario)','','email')}</span>${campo('u-tel','Teléfono','')}
+    <span id="u-w-veh" hidden>${campo('u-veh','Vehículo','')}</span><span id="u-w-pat" hidden>${campo('u-pat','Patente','')}</span><span id="u-w-col" hidden>${campo('u-col','Color del vehículo','')}</span></div>`;
+  const p=enviarDialogo(html,esEquipo?'Agregar al equipo PrestoPronto':'Agregar persona','Crear acceso',()=>PP_API.crearUsuario({negocio_id:neg||'',rol:esEquipo?'SUPERADMIN':val('u-rol'),nombre:val('u-nombre'),email:val('u-email'),telefono:val('u-tel'),vehiculo:val('u-veh'),patente:val('u-pat'),color_vehiculo:val('u-col')}));
+  const sync=()=>{ const r=esEquipo?'SUPERADMIN':val('u-rol'); $('#u-w-email').hidden=['COCINA','REPARTIDOR'].includes(r); ['veh','pat','col'].forEach(x=>$('#u-w-'+x).hidden=r!=='REPARTIDOR'); };
+  if(!esEquipo) $('#u-rol').onchange=sync; sync();
+  const a=await p;
+  if(a){ await mostrarAcceso(a); if(esEquipo) verEquipo(); else await recargarFicha(); }
+}
+
+/* ---------- Sitio ---------- */
+function subSitio(){
+  const n=FICHA.negocio;
+  $('#sub').innerHTML=`<div class="panel"><h2>Dirección y dominio</h2><div class="grid g2">
+    ${campo('s-slug','Dirección web (slug)',n.slug)}${campo('s-sub','Subdominio en la plataforma',n.subdominio)}
+    ${campo('s-dom','Dominio propio (opcional)',n.dominio_propio)}
+    <label class="f">Estado del dominio<select id="s-edom">${[['','Sin dominio propio'],['PENDIENTE','Pendiente'],['VERIFICADO','Verificado'],['ACTIVO','Activo']].map(([k,v])=>`<option value="${k}" ${(n.estado_dominio||'')===k?'selected':''}>${v}</option>`).join('')}</select></label></div>
+    <p class="muted" style="font-size:13px">En el demo, la web del negocio se abre en <a href="${esc(urlWeb(n.slug))}" target="_blank" rel="noopener">${esc(urlWeb(n.slug))}</a> (se habilita con la web conectada). El dominio propio queda registrado para la migración.</p></div>
+    <div class="panel"><h2>Apariencia</h2><div class="grid g3">
+      <label class="f">Plantilla<select id="s-pl">${[['clasica','Clásica'],['vitrina','Vitrina'],['express','Express']].map(([k,v])=>`<option value="${k}" ${(n.plantilla||'clasica')===k?'selected':''}>${v}</option>`).join('')}</select></label>
+      <label class="f">Color principal<input type="color" id="s-col" value="${esc(n.color_acento||'#E53935')}" style="height:42px;padding:4px"></label>
+      ${campo('s-logo','Enlace del logo',n.logo,'url')}</div>
+    <p class="muted" style="font-size:13px">El dueño podrá cambiar la apariencia desde su Administrador del sitio cuando conectemos la web.</p>
+    <div class="row"><span class="spacer"></span><button class="btn pri" type="button" id="s-guardar">Guardar sitio</button></div></div>`;
+  $('#s-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,slug:val('s-slug'),subdominio:val('s-sub'),dominio_propio:val('s-dom'),estado_dominio:val('s-edom'),plantilla:val('s-pl'),color_acento:val('s-col').toUpperCase(),logo:val('s-logo')}); await recargarFicha(); },'Sitio guardado.');
+}
+
+/* ---------- Historial ---------- */
+function filasBitacora(L,conNegocio){
+  if(!L.length) return '<div class="vacio">Sin registros.</div>';
+  return `<div class="tw"><table class="t"><thead><tr><th>Fecha</th>${conNegocio?'<th>Negocio</th>':''}<th>Quién</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>
+    ${L.map(b=>`<tr><td style="white-space:nowrap">${fechaHora(b.fecha)}</td>${conNegocio?`<td>${esc(b.negocio_id)}</td>`:''}<td>${esc(b.usuario_nombre)}${b.soporte==='SI'?' <span class="chip">soporte</span>':''}</td><td><b>${esc(b.accion)}</b></td><td>${esc(b.detalle)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function subHistorial(){ $('#sub').innerHTML=`<div class="panel"><h2>Historial del negocio</h2>${filasBitacora(FICHA.bitacora,false)}</div>`; }
+
+/* ================= Equipo ================= */
+async function verEquipo(){
+  const c=$('#tab-equipo'); c.innerHTML='<div class="vacio">Cargando…</div>';
+  let L; try{ L=await PP_API.listarEquipo(); }catch(e){ c.innerHTML=`<div class="aviso err">${esc(e.message)}</div>`; return; }
+  c.innerHTML=`<div class="panel"><div class="row"><h2 style="margin:0">Equipo PrestoPronto</h2><span class="spacer"></span><button class="btn pri sm" type="button" id="e-nuevo">Agregar persona</button></div>
+    <p class="muted" style="font-size:13px">Tienen acceso completo a la Consola y pueden entrar como cualquier negocio. Agrega solo a personas de total confianza.</p>
+    <div class="tw"><table class="t"><thead><tr><th>Nombre</th><th>Correo</th><th>Último ingreso</th><th>Estado</th><th></th></tr></thead><tbody>
+    ${L.map(u=>`<tr><td><b>${esc(u.nombre)}</b>${u.usuario_id===PERFIL.usuario.usuario_id?' <span class="chip">tú</span>':''}</td><td>${esc(u.email)}</td><td>${fechaHora(u.ultimo_ingreso)}</td>
+      <td>${u.activo==='NO'?'<span class="chip">Desactivado</span>':u.bloqueado?'<span class="chip err">Bloqueado</span>':'<span class="chip ok">Activo</span>'}</td>
+      <td>${u.usuario_id===PERFIL.usuario.usuario_id?'':`<div class="row"><button class="btn sm" type="button" data-u="reset" data-id="${u.usuario_id}">Restablecer acceso</button><button class="btn sm ${u.activo==='NO'?'':'danger'}" type="button" data-u="${u.activo==='NO'?'activar':'desactivar'}" data-id="${u.usuario_id}">${u.activo==='NO'?'Reactivar':'Desactivar'}</button></div>`}</td></tr>`).join('')}
+    </tbody></table></div></div>`;
+  $('#e-nuevo').onclick=()=>dialogoUsuario('');
+  c.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>accionUsuario(b.dataset.u,b.dataset.id));
+}
+
+/* ================= Bitácora ================= */
+async function verBitacora(){
+  const c=$('#tab-bitacora');
+  if(!LISTA.length){ try{ LISTA=await PP_API.listarNegocios(); }catch(e){} }
+  c.innerHTML=`<div class="panel"><div class="toolbar" style="grid-template-columns:1fr 1fr 1fr 2fr auto">
+      ${campo('b-desde','Desde',hoyIso(-30),'date')}${campo('b-hasta','Hasta',hoyIso(),'date')}
+      <label class="f">Negocio<select id="b-neg"><option value="">Todos</option>${LISTA.map(n=>`<option value="${esc(n.negocio_id)}">${esc(n.nombre)}</option>`).join('')}</select></label>
+      ${campo('b-texto','Texto','')}<button class="btn pri" type="button" id="b-buscar">Buscar</button></div><div id="b-res"></div></div>`;
+  const buscar=async()=>{ $('#b-res').innerHTML='<div class="vacio">Buscando…</div>';
+    try{ const r=await PP_API.bitacora({desde:val('b-desde'),hasta:val('b-hasta'),negocio_id:val('b-neg'),texto:val('b-texto')});
+      $('#b-res').innerHTML=`<p class="muted">${r.total} registros${r.total>300?'; se muestran los 300 más recientes':''}.</p>`+filasBitacora(r.filas,true); }
+    catch(e){ $('#b-res').innerHTML=`<div class="aviso err">${esc(e.message)}</div>`; } };
+  $('#b-buscar').onclick=buscar; buscar();
+}
+
+/* ================= Arranque ================= */
+PP_API.iniciar({ambiente:'consola', alExpirar:m=>verIngreso(m)});
+(async function(){
+  if(!PP_API.configurado()){ verIngreso('Falta configurar la URL del sistema en el archivo api.js.'); return; }
+  if(PP_API.tieneSesion()){ cargando(true); try{ await abrir(await PP_API.perfil()); return; }catch(e){ verIngreso(e.codigo==='SESION'?e.message:''); return; } finally{ cargando(false); } }
+  verIngreso('');
+})();
+</script>
+</body>
+</html>
