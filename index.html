@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<!--
+  PrestoPronto, versión 1.3
+  Archivo: index.html (página de inicio de PrestoPronto; va en la raíz del repositorio, junto a api.js y las carpetas consola, sitio, web y media)
+  Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PrestoPronto · Web y pedidos para tu local de comida</title>
+<meta name="description" content="Tu carta en línea, pedidos con seguimiento y despacho calculado por distancia. Tarifa mensual fija, sin comisión por pedido. Para restaurantes, cafeterías, pizzerías y botillerías.">
+<meta name="theme-color" content="#E53935">
+<meta property="og:title" content="PrestoPronto · Web y pedidos para tu local">
+<meta property="og:description" content="Tu carta, tus pedidos y tus clientes en una web propia. Sin comisión por pedido.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMyIgZmlsbD0iI0U1MzkzNSIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDUwIDUwKSBzY2FsZSgwLjkyKSByb3RhdGUoNDUpIHRyYW5zbGF0ZSgtNTAgLTUzKSI+CjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik0zOC41IDUwIFEyOSA1NiAyOCA3MiBMMzguNSA2NyBaIE02MS41IDUwIFE3MSA1NiA3MiA3MiBMNjEuNSA2NyBaIi8+CjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik01MCAxMiBDNjQgMjIgNjUgNDQgNjIgNjkgTDM4IDY5IEMzNSA0NCAzNiAyMiA1MCAxMiBaIi8+CjxnIGZpbGw9IiNFNTM5MzUiPjxyZWN0IHg9IjQ0LjgiIHk9IjI1IiB3aWR0aD0iMi42IiBoZWlnaHQ9IjEzIiByeD0iMS4zIi8+PHJlY3QgeD0iNDguNyIgeT0iMjUiIHdpZHRoPSIyLjYiIGhlaWdodD0iMTMiIHJ4PSIxLjMiLz48cmVjdCB4PSI1Mi42IiB5PSIyNSIgd2lkdGg9IjIuNiIgaGVpZ2h0PSIxMyIgcng9IjEuMyIvPgo8cGF0aCBkPSJNNDQuOCAzNS41IEg1NS4yIFYzOS41IFE1NS4yIDQ0LjUgNTEuOCA0NS41IEg0OC4yIFE0NC44IDQ0LjUgNDQuOCAzOS41IFoiLz48cmVjdCB4PSI0OC4yIiB5PSI0NCIgd2lkdGg9IjMuNiIgaGVpZ2h0PSIxOSIgcng9IjEuOCIvPjwvZz4KPHBhdGggZmlsbD0iI0ZGRkZGRiIgZD0iTTQzLjUgNzMgSDU2LjUgUTU2IDgyIDUwIDkxIFE0NCA4MiA0My41IDczIFoiLz4KPGcgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjMuNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj48bGluZSB4MT0iMzUiIHkxPSI3OCIgeDI9IjM1IiB5Mj0iODYiLz48bGluZSB4MT0iNjUiIHkxPSI3OCIgeDI9IjY1IiB5Mj0iODQiLz48L2c+CjwvZz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --rojo:#E53935; --rojo-osc:#C62828; --tinta:#1B1B1B; --tinta2:#4A4744; --suave:#77716B;
+  --crema:#FBF6EF; --crema2:#F4ECE1; --linea:#E7DDD0; --blanco:#FFFFFF; --amarillo:#F2C500; --verde:#1FAF53;
+  --r:20px; --sombra:0 18px 50px rgba(27,27,27,.12);
+  --f-tit:"Poppins",system-ui,sans-serif; --f-txt:"Inter",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--f-txt);color:var(--tinta);background:var(--crema);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+[hidden]{display:none!important}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{width:min(1160px,100%);margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--f-tit);line-height:1.12;letter-spacing:-.02em}
+h2{font-size:clamp(30px,4.4vw,46px);font-weight:700}
+h3{font-size:20px;font-weight:600}
+.eti{display:inline-block;font-family:var(--f-tit);font-weight:600;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--rojo);margin-bottom:14px}
+.lead{font-size:clamp(17px,1.6vw,20px);color:var(--tinta2);max-width:640px}
+.sec{padding:clamp(72px,10vw,120px) 0}
+.sec-cab{margin-bottom:48px}
+.sec-cab.centro{text-align:center}.sec-cab.centro .lead{margin:16px auto 0}
+.sec-cab .lead{margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:999px;padding:15px 26px;font-weight:600;font-size:16px;text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.pri{background:var(--rojo);color:#fff;box-shadow:0 10px 24px rgba(229,57,53,.32)}
+.btn.pri:hover{background:var(--rojo-osc)}
+.btn.sec{background:var(--blanco);color:var(--tinta);border:1.5px solid var(--linea)}
+.btn.wa{background:var(--verde);color:#fff}
+.btn svg{width:20px;height:20px;flex:none}
+
+/* ---------- Encabezado ---------- */
+.top{position:sticky;top:0;z-index:50;background:rgba(251,246,239,.88);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid transparent;transition:border-color .2s}
+.top.borde{border-color:var(--linea)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:72px}
+.marca{display:flex;align-items:center;text-decoration:none;color:var(--tinta)}
+.marca svg{height:34px;width:auto}
+.menu{display:flex;gap:26px;margin-left:auto}
+.menu a{text-decoration:none;font-weight:500;font-size:15px;color:var(--tinta2)}
+.menu a:hover{color:var(--rojo)}
+.top .acc{display:flex;gap:10px;align-items:center}
+.top .ing{font-size:15px;font-weight:600;text-decoration:none;color:var(--tinta2);padding:10px 4px}
+.top .btn{padding:11px 20px;font-size:15px}
+.hamb{display:none;margin-left:auto;background:none;border:0;width:44px;height:44px;border-radius:12px}
+.hamb svg{width:26px;height:26px}
+.panel-mov{display:none}
+@media (max-width:940px){
+  .menu,.top .acc{display:none}
+  .hamb{display:grid;place-items:center}
+  .panel-mov{position:fixed;inset:72px 0 auto 0;background:var(--crema);border-bottom:1px solid var(--linea);padding:12px 20px 24px;flex-direction:column;gap:4px;box-shadow:0 20px 40px rgba(0,0,0,.08)}
+  .panel-mov.abierto{display:flex}
+  .panel-mov a{padding:12px 0;text-decoration:none;font-weight:600;border-bottom:1px solid var(--linea)}
+  .panel-mov .btn{margin-top:14px}
+}
+
+/* ---------- Portada ---------- */
+.hero{position:relative;overflow:hidden;padding:56px 0 90px}
+.hero::before{content:"";position:absolute;width:780px;height:780px;right:-220px;top:-180px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(229,57,53,.16),rgba(229,57,53,0) 65%);pointer-events:none}
+.hero .wrap{display:grid;grid-template-columns:1.08fr .92fr;gap:40px;align-items:center;position:relative}
+.hero h1{font-size:clamp(40px,6.2vw,70px);font-weight:800;letter-spacing:-.035em}
+.hero h1 em{font-style:normal;color:var(--rojo)}
+.hero .lead{margin:22px 0 32px}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap}
+.garantias{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:30px;font-size:15px;color:var(--tinta2)}
+.garantias span{display:flex;gap:8px;align-items:center}
+.garantias svg{width:18px;height:18px;color:var(--rojo);flex:none}
+.telefonos{position:relative;height:620px}
+.tel{position:absolute;width:280px;border-radius:40px;background:#0d0d0d;padding:10px;box-shadow:var(--sombra),0 0 0 1px rgba(0,0,0,.06)}
+.tel img{border-radius:31px;width:100%;aspect-ratio:540/1168;object-fit:cover;object-position:top}
+.tel.t1{left:50%;top:0;transform:translateX(-62%) rotate(-4deg);z-index:2}
+.tel.t2{left:50%;top:70px;transform:translateX(6%) rotate(5deg);width:250px;z-index:1;opacity:.97}
+.burbuja{position:absolute;z-index:3;background:var(--blanco);border-radius:16px;padding:12px 16px;box-shadow:var(--sombra);font-size:14px;line-height:1.35;display:flex;gap:10px;align-items:center}
+.burbuja b{display:block;font-family:var(--f-tit);font-size:15px}
+.burbuja .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex:none}
+.burbuja .ic svg{width:20px;height:20px}
+.b1{left:0;bottom:120px}.b1 .ic{background:#FDE7E6;color:var(--rojo)}
+.b2{right:0;top:36px}.b2 .ic{background:#DDF3E4;color:#13803F}
+@media (max-width:940px){
+  .hero{padding:28px 0 64px}
+  .hero .wrap{grid-template-columns:1fr}
+  .telefonos{height:520px;margin-top:12px}
+  .tel{width:230px}.tel.t2{width:205px}
+  .b1{left:0;bottom:40px}.b2{right:0;top:10px}
+}
+@media (max-width:480px){
+  .telefonos{height:470px}
+  .tel{width:205px}.tel.t2{width:180px;top:60px}
+  .burbuja{font-size:12.5px;padding:10px 12px}.burbuja b{font-size:13.5px}
+}
+
+/* ---------- Rubros ---------- */
+.rubros{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);background:var(--blanco)}
+.rubros .wrap{display:flex;align-items:center;gap:28px;padding-top:22px;padding-bottom:22px;flex-wrap:wrap;justify-content:center}
+.rubros p{font-weight:600;color:var(--suave);font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+.rubros ul{display:flex;gap:10px;flex-wrap:wrap;list-style:none;justify-content:center}
+.rubros li{display:flex;gap:8px;align-items:center;padding:8px 14px;border-radius:999px;background:var(--crema);font-weight:600;font-size:15px}
+.rubros li svg{width:20px;height:20px;color:var(--rojo)}
+
+/* ---------- Comparación ---------- */
+.versus{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.vs{border-radius:var(--r);padding:32px;background:var(--blanco);border:1px solid var(--linea)}
+.vs.nuestro{background:var(--tinta);color:#fff;border-color:var(--tinta);position:relative;overflow:hidden}
+.vs.nuestro::after{content:"";position:absolute;right:-60px;bottom:-60px;width:220px;height:220px;border-radius:50%;background:rgba(229,57,53,.25)}
+.vs h3{font-size:22px;margin-bottom:18px}
+.vs ul{list-style:none;display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
+.vs li{display:flex;gap:12px;align-items:flex-start}
+.vs li svg{width:22px;height:22px;flex:none;margin-top:2px}
+.vs .no svg{color:#B4A99C}
+.vs.nuestro li svg{color:var(--amarillo)}
+.vs .chico{font-size:14px;color:var(--suave);margin-top:20px}
+@media (max-width:760px){.versus{grid-template-columns:1fr}.vs{padding:24px}}
+
+/* ---------- Qué hacemos ---------- */
+.grilla{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.tarj{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r);padding:28px;transition:transform .2s,box-shadow .2s}
+.tarj:hover{transform:translateY(-3px);box-shadow:var(--sombra)}
+.tarj .ic{width:52px;height:52px;border-radius:15px;background:#FDE7E6;color:var(--rojo);display:grid;place-items:center;margin-bottom:18px}
+.tarj .ic svg{width:26px;height:26px}
+.tarj p{color:var(--tinta2);margin-top:10px;font-size:16px}
+.tarj .plan{display:inline-block;margin-top:14px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--suave);background:var(--crema);border-radius:6px;padding:3px 8px}
+@media (max-width:940px){.grilla{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.grilla{grid-template-columns:1fr}.tarj{padding:22px}}
+
+/* ---------- Pantallas ---------- */
+.oscuro{background:var(--tinta);color:#fff}
+.oscuro .lead{color:#C9C3BB}
+.oscuro .eti{color:#FF8A80}
+.carrusel{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.pant{text-align:center}
+.pant .tel-s{border-radius:32px;background:#000;padding:8px;box-shadow:0 0 0 1px #333,0 20px 40px rgba(0,0,0,.4)}
+.pant img{border-radius:25px;aspect-ratio:540/1168;object-fit:cover;object-position:top;width:100%}
+.pant b{display:block;font-family:var(--f-tit);font-size:17px;margin-top:18px}
+.pant span{display:block;color:#B9B2A9;font-size:15px;margin-top:4px}
+.ver-demo{text-align:center;margin-top:44px}
+@media (max-width:940px){.carrusel{grid-template-columns:repeat(4,minmax(220px,1fr));overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;margin:0 -20px;padding-left:20px;padding-right:20px}.pant{scroll-snap-align:center}}
+
+/* ---------- Cómo funciona ---------- */
+.pasos{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:p;list-style:none}
+.pasos li{position:relative;padding:28px 24px;background:var(--blanco);border-radius:var(--r);border:1px solid var(--linea)}
+.pasos li::before{counter-increment:p;content:counter(p);font-family:var(--f-tit);font-weight:800;font-size:15px;width:38px;height:38px;border-radius:50%;background:var(--rojo);color:#fff;display:grid;place-items:center;margin-bottom:18px}
+.pasos p{color:var(--tinta2);font-size:16px;margin-top:8px}
+@media (max-width:940px){.pasos{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.pasos{grid-template-columns:1fr}}
+
+/* ---------- Filosofía ---------- */
+.filo{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:start}
+.filo blockquote{font-family:var(--f-tit);font-weight:700;font-size:clamp(28px,3.6vw,40px);line-height:1.2;letter-spacing:-.02em}
+.filo blockquote em{font-style:normal;color:var(--rojo)}
+.filo .firma{margin-top:22px;color:var(--tinta2);font-size:16px}
+.principios{display:flex;flex-direction:column;gap:0}
+.pr{display:grid;grid-template-columns:56px 1fr;gap:14px;padding:22px 0;border-top:1px solid var(--linea)}
+.pr:last-child{border-bottom:1px solid var(--linea)}
+.pr .n{font-family:var(--f-tit);font-weight:800;color:var(--rojo);font-size:22px}
+.pr p{color:var(--tinta2);margin-top:6px;font-size:16px}
+@media (max-width:860px){.filo{grid-template-columns:1fr;gap:36px}}
+
+/* ---------- Planes ---------- */
+.planes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+.pl{background:var(--blanco);border:1px solid var(--linea);border-radius:24px;padding:32px 28px;display:flex;flex-direction:column}
+.pl.dest{border:2px solid var(--rojo);box-shadow:var(--sombra);position:relative}
+.pl.dest .cinta{position:absolute;top:-14px;left:28px;background:var(--rojo);color:#fff;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:999px}
+.pl h3{font-size:24px}
+.pl .para{color:var(--tinta2);margin:8px 0 22px;font-size:16px;min-height:52px}
+.pl ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:28px;flex:1}
+.pl li{display:flex;gap:10px;font-size:15.5px}
+.pl li svg{width:20px;height:20px;color:var(--rojo);flex:none;margin-top:2px}
+.pl li.mas{font-weight:600}
+.pl .btn{width:100%}
+.nota-precio{text-align:center;color:var(--tinta2);margin-top:28px;font-size:16px}
+.fundadores{margin-top:40px;border-radius:24px;padding:32px;background:linear-gradient(120deg,#FFF3D1,#FDE7E6);display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+.fundadores .ic{width:64px;height:64px;border-radius:18px;background:var(--blanco);display:grid;place-items:center;color:var(--rojo)}
+.fundadores .ic svg{width:32px;height:32px}
+.fundadores h3{font-size:22px}
+.fundadores p{color:var(--tinta2);margin-top:6px}
+@media (max-width:940px){.planes{grid-template-columns:1fr;max-width:520px;margin:0 auto}.pl .para{min-height:0}.fundadores{grid-template-columns:1fr;text-align:left}}
+
+/* ---------- Piloto ---------- */
+.piloto{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;background:var(--blanco);border:1px solid var(--linea);border-radius:24px;padding:28px 32px}
+.piloto img{width:84px;height:84px;border-radius:20px;background:#000;object-fit:contain;padding:8px}
+.piloto h3{font-size:22px}
+.piloto p{color:var(--tinta2);margin-top:6px}
+@media (max-width:760px){.piloto{grid-template-columns:1fr;padding:24px}}
+
+/* ---------- Preguntas ---------- */
+.faq{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.faq details{background:var(--blanco);border:1px solid var(--linea);border-radius:16px;padding:0 24px}
+.faq summary{cursor:pointer;list-style:none;padding:20px 0;font-family:var(--f-tit);font-weight:600;font-size:18px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:26px;font-weight:500;color:var(--rojo);transition:transform .2s;flex:none}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{padding:0 0 22px;color:var(--tinta2)}
+
+/* ---------- Contacto ---------- */
+.contacto{background:var(--rojo);color:#fff;position:relative;overflow:hidden}
+.contacto::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 20%,rgba(255,255,255,.16),transparent 45%),radial-gradient(circle at 10% 90%,rgba(0,0,0,.18),transparent 45%)}
+.contacto .wrap{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.contacto .lead{color:rgba(255,255,255,.88)}
+.contacto .eti{color:#FFE0DE}
+.form{background:var(--blanco);color:var(--tinta);border-radius:24px;padding:28px;box-shadow:0 30px 60px rgba(0,0,0,.2)}
+.form .fila{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form label{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;margin-bottom:14px}
+.form input,.form select,.form textarea{border:1.5px solid var(--linea);border-radius:12px;padding:12px 14px;background:var(--crema);font-weight:400;width:100%}
+.form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:var(--rojo);background:#fff}
+.form .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.form .btns .btn{flex:1;min-width:180px}
+.form .err{color:var(--rojo-osc);font-size:14px;font-weight:600;min-height:20px;margin-bottom:6px}
+.form small{display:block;color:var(--suave);font-size:13px;margin-top:12px}
+@media (max-width:860px){.contacto .wrap{grid-template-columns:1fr;gap:32px}.form .fila{grid-template-columns:1fr}}
+
+/* ---------- Pie ---------- */
+footer{background:var(--tinta);color:#C9C3BB;padding:56px 0 40px;font-size:15px}
+footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+footer .marca svg{height:32px;color:#fff}
+footer p{margin-top:14px;max-width:340px}
+footer h4{font-family:var(--f-tit);color:#fff;font-size:15px;margin-bottom:12px}
+footer ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+footer a{text-decoration:none}
+footer a:hover{color:#fff}
+.legal{grid-column:1/-1;border-top:1px solid #333;padding-top:22px;margin-top:12px;font-size:13px;color:#8F8880}
+@media (max-width:760px){footer .wrap{grid-template-columns:1fr}}
+
+.aparece{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.aparece.visto{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.aparece{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="marca" href="#" aria-label="PrestoPronto, inicio"><svg viewBox="0 0 487 100" role="img" aria-label="PrestoPronto"><rect width="100" height="100" rx="23" fill="#E53935"/><g transform="translate(50 50) scale(0.9) rotate(45) translate(-50 -53)"><path fill="#FFFFFF" d="M38.5 50 Q29 56 28 72 L38.5 67 Z M61.5 50 Q71 56 72 72 L61.5 67 Z"/><path fill="#FFFFFF" d="M50 12 C64 22 65 44 62 69 L38 69 C35 44 36 22 50 12 Z"/><g fill="#E53935"><rect x="44.8" y="25" width="2.6" height="13" rx="1.3"/><rect x="48.7" y="25" width="2.6" height="13" rx="1.3"/><rect x="52.6" y="25" width="2.6" height="13" rx="1.3"/><path d="M44.8 35.5 H55.2 V39.5 Q55.2 44.5 51.8 45.5 H48.2 Q44.8 44.5 44.8 39.5 Z"/><rect x="48.2" y="44" width="3.6" height="19" rx="1.8"/></g><path fill="#FFFFFF" d="M43.5 73 H56.5 Q56 82 50 91 Q44 82 43.5 73 Z"/><g stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"><line x1="35" y1="78" x2="35" y2="86"/><line x1="65" y1="78" x2="65" y2="84"/></g></g><path fill="currentColor" d="M140.7 56.2H135.5V69.0H125.0V31.2H140.7Q145.2 31.2 148.4 32.8Q151.6 34.4 153.2 37.2Q154.8 40.1 154.8 43.8Q154.8 47.2 153.2 50.0Q151.6 52.8 148.5 54.5Q145.3 56.2 140.7 56.2ZM144.1 43.8Q144.1 39.6 139.6 39.6H135.5V47.8H139.6Q144.1 47.8 144.1 43.8Z M178.8 38.6V49.8H175.9Q172.4 49.8 170.8 51.2Q169.1 52.5 169.1 55.8V69.0H158.6V38.9H169.1V44.2Q170.9 41.6 173.4 40.1Q175.9 38.6 178.8 38.6Z M210.7 56.0H190.8Q191.0 58.5 192.2 59.7Q193.4 60.9 195.3 60.9Q197.9 60.9 199.0 58.6H210.2Q209.5 61.7 207.5 64.1Q205.5 66.5 202.5 67.9Q199.4 69.3 195.7 69.3Q191.3 69.3 187.8 67.4Q184.3 65.6 182.4 62.1Q180.4 58.6 180.4 53.9Q180.4 49.2 182.4 45.7Q184.3 42.3 187.7 40.4Q191.2 38.5 195.7 38.5Q200.1 38.5 203.6 40.3Q207.0 42.2 208.9 45.6Q210.9 49.0 210.9 53.6Q210.9 54.8 210.7 56.0ZM200.1 50.9Q200.1 49.0 198.9 47.9Q197.6 46.8 195.6 46.8Q193.7 46.8 192.5 47.9Q191.3 48.9 190.9 50.9Z M213.2 58.8H223.4Q223.6 60.3 224.7 61.1Q225.8 61.9 227.5 61.9Q228.8 61.9 229.5 61.3Q230.3 60.8 230.3 59.9Q230.3 58.8 229.0 58.3Q227.8 57.7 225.0 57.1Q221.7 56.5 219.6 55.7Q217.5 54.9 215.9 53.0Q214.3 51.2 214.3 48.1Q214.3 45.4 215.7 43.3Q217.2 41.1 220.0 39.8Q222.8 38.5 226.8 38.5Q232.7 38.5 236.1 41.4Q239.4 44.3 240.0 49.0H230.5Q230.2 47.6 229.2 46.8Q228.2 46.0 226.6 46.0Q225.3 46.0 224.6 46.5Q223.9 47.0 223.9 47.8Q223.9 48.9 225.2 49.5Q226.4 50.0 229.1 50.6Q232.4 51.3 234.6 52.2Q236.8 53.0 238.4 54.9Q240.0 56.8 240.0 60.1Q240.0 62.7 238.5 64.8Q237.0 66.9 234.2 68.1Q231.3 69.3 227.5 69.3Q223.5 69.3 220.3 68.0Q217.1 66.6 215.2 64.2Q213.4 61.8 213.2 58.8Z M262.5 60.0V69.0H257.9Q246.4 69.0 246.4 57.5V47.6H242.7V38.9H246.4V31.6H257.0V38.9H262.4V47.6H257.0V57.7Q257.0 58.9 257.5 59.5Q258.1 60.0 259.4 60.0Z M265.2 53.9Q265.2 49.2 267.2 45.7Q269.3 42.3 272.9 40.4Q276.4 38.5 280.9 38.5Q285.4 38.5 289.0 40.4Q292.5 42.3 294.6 45.7Q296.7 49.2 296.7 53.9Q296.7 58.6 294.6 62.1Q292.5 65.6 289.0 67.4Q285.4 69.3 280.9 69.3Q276.4 69.3 272.8 67.4Q269.2 65.6 267.2 62.1Q265.2 58.6 265.2 53.9ZM286.0 53.9Q286.0 50.8 284.5 49.2Q283.1 47.6 280.9 47.6Q278.8 47.6 277.3 49.2Q275.9 50.8 275.9 53.9Q275.9 57.0 277.3 58.6Q278.7 60.2 280.9 60.2Q283.1 60.2 284.5 58.6Q286.0 56.9 286.0 53.9Z"/><path fill="#E53935" d="M316.2 56.2H311.0V69.0H300.5V31.2H316.2Q320.8 31.2 324.0 32.8Q327.2 34.4 328.8 37.2Q330.4 40.1 330.4 43.8Q330.4 47.2 328.8 50.0Q327.2 52.8 324.0 54.5Q320.8 56.2 316.2 56.2ZM319.7 43.8Q319.7 39.6 315.2 39.6H311.0V47.8H315.2Q319.7 47.8 319.7 43.8Z M354.4 38.6V49.8H351.5Q348.0 49.8 346.4 51.2Q344.7 52.5 344.7 55.8V69.0H334.2V38.9H344.7V44.2Q346.5 41.6 349.0 40.1Q351.5 38.6 354.4 38.6Z M356.0 53.9Q356.0 49.2 358.1 45.7Q360.1 42.3 363.7 40.4Q367.3 38.5 371.8 38.5Q376.3 38.5 379.8 40.4Q383.4 42.3 385.5 45.7Q387.5 49.2 387.5 53.9Q387.5 58.6 385.5 62.1Q383.4 65.6 379.8 67.4Q376.2 69.3 371.7 69.3Q367.2 69.3 363.6 67.4Q360.1 65.6 358.0 62.1Q356.0 58.6 356.0 53.9ZM376.9 53.9Q376.9 50.8 375.4 49.2Q373.9 47.6 371.8 47.6Q369.6 47.6 368.2 49.2Q366.7 50.8 366.7 53.9Q366.7 57.0 368.1 58.6Q369.5 60.2 371.7 60.2Q373.9 60.2 375.4 58.6Q376.9 56.9 376.9 53.9Z M422.4 51.4V69.0H411.9V52.8Q411.9 50.2 410.5 48.8Q409.2 47.3 406.9 47.3Q404.6 47.3 403.2 48.8Q401.9 50.2 401.9 52.8V69.0H391.4V38.9H401.9V43.2Q403.3 41.1 405.6 39.9Q408.0 38.6 411.1 38.6Q416.2 38.6 419.3 42.1Q422.4 45.5 422.4 51.4Z M445.5 60.0V69.0H440.9Q429.4 69.0 429.4 57.5V47.6H425.7V38.9H429.4V31.6H439.9V38.9H445.4V47.6H439.9V57.7Q439.9 58.9 440.5 59.5Q441.1 60.0 442.4 60.0Z M448.1 53.9Q448.1 49.2 450.2 45.7Q452.3 42.3 455.8 40.4Q459.4 38.5 463.9 38.5Q468.4 38.5 472.0 40.4Q475.5 42.3 477.6 45.7Q479.7 49.2 479.7 53.9Q479.7 58.6 477.6 62.1Q475.5 65.6 471.9 67.4Q468.3 69.3 463.8 69.3Q459.3 69.3 455.8 67.4Q452.2 65.6 450.2 62.1Q448.1 58.6 448.1 53.9ZM469.0 53.9Q469.0 50.8 467.5 49.2Q466.0 47.6 463.9 47.6Q461.8 47.6 460.3 49.2Q458.9 50.8 458.9 53.9Q458.9 57.0 460.3 58.6Q461.6 60.2 463.8 60.2Q466.0 60.2 467.5 58.6Q469.0 56.9 469.0 53.9Z"/></svg></a>
+    <nav class="menu" aria-label="Secciones">
+      <a href="#que-hacemos">Qué hacemos</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#filosofia">Filosofía</a>
+      <a href="#planes">Planes</a>
+      <a href="#preguntas">Preguntas</a>
+    </nav>
+    <div class="acc">
+      <a class="ing" href="sitio/">Ingreso negocios</a>
+      <a class="btn pri" href="#contacto">Conversemos</a>
+    </div>
+    <button class="hamb" id="hamb" type="button" aria-label="Abrir menú" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <nav class="panel-mov" id="panel-mov" aria-label="Menú">
+    <a href="#que-hacemos">Qué hacemos</a><a href="#como-funciona">Cómo funciona</a><a href="#filosofia">Filosofía</a>
+    <a href="#planes">Planes</a><a href="#preguntas">Preguntas</a><a href="sitio/">Ingreso negocios</a>
+    <a class="btn pri" href="#contacto">Conversemos</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eti">Para locales de comida y bebida</span>
+      <h1>Tu carta en línea y tus pedidos, <em>sin pagar comisión</em> por cada venta.</h1>
+      <p class="lead">PrestoPronto le da a tu local una web propia donde tus clientes ven la carta, piden con delivery o retiro y siguen su pedido desde el celular. Pagas una tarifa mensual fija y cada venta queda completa para ti.</p>
+      <div class="ctas">
+        <a class="btn pri" href="#contacto">Quiero mi web<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn sec" href="web/?n=labarra" target="_blank" rel="noopener">Ver un local funcionando</a>
+      </div>
+      <div class="garantias">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Sin comisión por pedido</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Tus clientes son tuyos</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Te cargamos la carta</span>
+      </div>
+    </div>
+    <div class="telefonos" aria-hidden="true">
+      <div class="tel t1"><img src="media/home/portada.webp" alt="" width="540" height="1168"></div>
+      <div class="tel t2"><img src="media/home/seguimiento.webp" alt="" width="540" height="1168" loading="lazy"></div>
+      <div class="burbuja b1"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span><b>1,4 km · Anillo 1</b>Despacho calculado solo</span></div>
+      <div class="burbuja b2"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span><span><b>Pedido recibido</b>El cliente lo sigue en vivo</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="rubros" aria-label="Rubros">
+  <div class="wrap">
+    <p>Pensado para</p>
+    <ul>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg>Sushi y nikkei</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21 3 5c6-2.5 12-2.5 18 0Z"/><circle cx="10" cy="9" r="1" fill="currentColor"/><circle cx="14" cy="12" r="1" fill="currentColor"/></svg>Pizzerías</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11c0-4 3.5-6 8-6s8 2 8 6Z"/><path d="M3 14.5h18"/><path d="M5 18h14c0 1.5-1 2.5-3 2.5H8c-2 0-3-1-3-2.5Z"/></svg>Sangucherías</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6Z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3v3M12 3v3"/></svg>Cafeterías</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 11h12l-1.5 9h-9Z"/><path d="M7 11c0-3.5 2.2-6 5-6s5 2.5 5 6"/></svg>Pastelerías</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M10 2h4v4l1.5 3v12a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1V9L10 6Z"/><path d="M8.5 13h7"/></svg>Botillerías</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18c0 5-4 9-9 9s-9-4-9-9Z"/><path d="M14 4l-3 7M18 5l-5 6"/></svg>Comida casera</li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec" id="por-que">
+  <div class="wrap">
+    <div class="sec-cab aparece">
+      <span class="eti">Por qué PrestoPronto</span>
+      <h2>Vender por internet no debería costarte una parte de cada pedido.</h2>
+      <p class="lead">Las aplicaciones de delivery te traen clientes, pero se quedan con un porcentaje de cada venta, deciden cómo se ve tu local y guardan los datos de quien te compra. Con tu propia web el negocio vuelve a ser tuyo.</p>
+    </div>
+    <div class="versus">
+      <div class="vs aparece">
+        <h3>Con una app de delivery</h3>
+        <ul>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>Pagas comisión en cada pedido, venda poco o mucho.</li>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>Tu local aparece al lado de la competencia.</li>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>No sabes quién te compra ni puedes volver a contactarlo.</li>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>Muchas veces subes los precios para compensar.</li>
+        </ul>
+      </div>
+      <div class="vs nuestro aparece">
+        <h3>Con PrestoPronto</h3>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Tarifa mensual fija. Si vendes más, ganas más.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Una web con tu nombre, tu logo y tus colores.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Conoces a tus clientes y les ofreces promociones.</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Cobras el mismo precio que en el mesón.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="que-hacemos" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-cab centro aparece">
+      <span class="eti">Qué hacemos</span>
+      <h2>Todo lo que tu local necesita para vender en línea</h2>
+      <p class="lead">Partes con la web y la carta. Cuando quieras, sumas pedidos, cocina, reparto y reportes. Todo conversa entre sí.</p>
+    </div>
+    <div class="grilla">
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></svg></div>
+        <h3>Web y carta propia</h3><p>Tu carta ordenada por categorías, con fotos, precios, buscador y botones directos a WhatsApp, Instagram y cómo llegar. Se ve bien en cualquier celular.</p><span class="plan">Todos los planes</span></article>
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12Z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg></div>
+        <h3>Pedidos con seguimiento</h3><p>El cliente arma su pedido, elige delivery o retiro y ve en su celular cuando lo reciben, lo preparan y sale a reparto.</p><span class="plan">Web y pedidos</span></article>
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="6.5" stroke-dasharray="2 2.6"/><circle cx="12" cy="12" r="10"/></svg></div>
+        <h3>Despacho por distancia</h3><p>Defines anillos de reparto con su costo. Con la ubicación del cliente el sistema calcula la distancia y cobra lo que corresponde, sin discusiones.</p><span class="plan">Web y pedidos</span></article>
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+        <h3>Ingreso sin contraseña</h3><p>Tu cliente entra con un código que le llega al correo. Sin claves que olvidar. Sus direcciones quedan guardadas y puede repetir un pedido con un toque.</p><span class="plan">Web y pedidos</span></article>
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div>
+        <h3>Pagos a tu manera</h3><p>Efectivo, tarjeta o transferencia al recibir, y transferencia previa con los datos de tu cuenta a la vista. El dinero llega directo a ti.</p><span class="plan">Web y pedidos</span></article>
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+        <h3>Clientes y reportes</h3><p>Ventas por zona, ticket promedio, lo más pedido por categoría y quiénes son tus clientes frecuentes, para ofrecerles la promoción precisa.</p><span class="plan">Completo</span></article>
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></div>
+        <h3>Pantalla de cocina</h3><p>Los pedidos llegan a una pantalla con su hora y tiempo de preparación. La cocina avanza el estado y el cliente lo ve al instante.</p><span class="plan">Completo</span></article>
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M6 17h4l3-6h4l1 6M13 11l-2-4H8"/></svg></div>
+        <h3>App del repartidor</h3><p>Tu repartidor ve sus entregas con la dirección y la ruta, y su ubicación se actualiza para que el cliente sepa cuándo llega.</p><span class="plan">Completo</span></article>
+      <article class="tarj aparece"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+        <h3>Tú controlas tu carta</h3><p>Cambias precios, agotas un producto o subes una foto desde tu panel. Si tienes la carta en Excel, la cargamos completa de una vez.</p><span class="plan">Todos los planes</span></article>
+    </div>
+  </div>
+</section>
+
+<section class="sec oscuro" id="pantallas">
+  <div class="wrap">
+    <div class="sec-cab centro aparece">
+      <span class="eti">Así lo ve tu cliente</span>
+      <h2>Una experiencia simple, de principio a fin</h2>
+      <p class="lead">Estas pantallas son reales: son de La Barra Susheria, nuestro local piloto en San Bernardo.</p>
+    </div>
+    <div class="carrusel">
+      <figure class="pant aparece"><div class="tel-s"><img src="media/home/portada.webp" alt="Portada de la web de La Barra Susheria" loading="lazy" width="540" height="1168"></div><b>Tu marca primero</b><span>Logo, colores, horario y redes</span></figure>
+      <figure class="pant aparece"><div class="tel-s"><img src="media/home/carta.webp" alt="Carta con categorías y productos" loading="lazy" width="540" height="1168"></div><b>Carta fácil de recorrer</b><span>Categorías, buscador y fotos</span></figure>
+      <figure class="pant aparece"><div class="tel-s"><img src="media/home/carro.webp" alt="Carro con el costo de despacho calculado" loading="lazy" width="540" height="1168"></div><b>Despacho calculado</b><span>Según la ubicación del cliente</span></figure>
+      <figure class="pant aparece"><div class="tel-s"><img src="media/home/seguimiento.webp" alt="Seguimiento del pedido" loading="lazy" width="540" height="1168"></div><b>Seguimiento en vivo</b><span>Sin llamar al local para preguntar</span></figure>
+    </div>
+    <div class="ver-demo"><a class="btn pri" href="web/?n=labarra" target="_blank" rel="noopener">Abrir la web de La Barra</a></div>
+  </div>
+</section>
+
+<section class="sec" id="como-funciona">
+  <div class="wrap">
+    <div class="sec-cab aparece">
+      <span class="eti">Cómo funciona</span>
+      <h2>Tu web lista en pocos días, sin que tengas que aprender nada técnico</h2>
+    </div>
+    <ol class="pasos">
+      <li class="aparece"><h3>Conversamos</h3><p>Nos cuentas cómo trabajas: delivery, retiro, horarios, zonas de reparto y cómo te pagan.</p></li>
+      <li class="aparece"><h3>Cargamos tu carta</h3><p>Nos mandas tu carta en Excel, PDF o una foto. Nosotros la ordenamos y la subimos con precios y fotos.</p></li>
+      <li class="aparece"><h3>Le damos tu cara</h3><p>Elegimos juntos plantilla, colores y tipografía para que la web se parezca a tu local.</p></li>
+      <li class="aparece"><h3>Compartes y vendes</h3><p>Pones el enlace en tu Instagram, tu WhatsApp y un código QR en el mesón. Los pedidos empiezan a llegar.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec" id="filosofia" style="background:var(--crema2)">
+  <div class="wrap filo">
+    <div class="aparece">
+      <span class="eti">Nuestra filosofía</span>
+      <blockquote>El buen local de barrio merece la misma tecnología que una cadena, <em>sin entregar su negocio a cambio.</em></blockquote>
+      <p class="firma">Presto y pronto quieren decir lo mismo: rápido. Así queremos que sea todo, el pedido para tu cliente y la puesta en marcha para ti.</p>
+    </div>
+    <div class="principios">
+      <div class="pr aparece"><span class="n">01</span><div><h3>Tu cliente es tuyo</h3><p>Los datos de quienes te compran pertenecen a tu negocio. Los usamos para que tú vendas más, nunca para mostrarle a otro local.</p></div></div>
+      <div class="pr aparece"><span class="n">02</span><div><h3>Precio claro y fijo</h3><p>Una tarifa mensual conocida desde el primer día. Sin comisiones escondidas que crecen justo cuando te va bien.</p></div></div>
+      <div class="pr aparece"><span class="n">03</span><div><h3>Simple antes que complicado</h3><p>Cada pantalla está pensada para alguien que atiende el mesón, cocina y responde WhatsApp al mismo tiempo.</p></div></div>
+      <div class="pr aparece"><span class="n">04</span><div><h3>Cerca de verdad</h3><p>Te acompañamos en la puesta en marcha y respondemos por WhatsApp. Si algo falla en pleno viernes, hablas con una persona.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="planes">
+  <div class="wrap">
+    <div class="sec-cab centro aparece">
+      <span class="eti">Planes</span>
+      <h2>Empieza con lo que necesitas hoy</h2>
+      <p class="lead">Puedes subir de plan cuando tu local lo pida. Tu carta, tus clientes y tu historial se mantienen.</p>
+    </div>
+    <div class="planes">
+      <div class="pl aparece">
+        <h3>Web</h3><p class="para">Tu carta digital con tu marca. Los pedidos llegan por WhatsApp.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Web propia con carta y fotos</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Carro que arma el mensaje de WhatsApp</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Panel para editar productos y precios</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Carga inicial de tu carta</li>
+        </ul>
+        <a class="btn sec" href="#contacto" data-plan="Web">Me interesa</a>
+      </div>
+      <div class="pl dest aparece"><span class="cinta">Recomendado</span>
+        <h3>Web y pedidos</h3><p class="para">Tus clientes piden, pagan a su manera y siguen el pedido.</p>
+        <ul>
+          <li class="mas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Todo lo del plan Web</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Pedidos en línea con seguimiento</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Despacho calculado por anillos</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Cuentas de cliente sin contraseña</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Efectivo, tarjeta y transferencia</li>
+        </ul>
+        <a class="btn pri" href="#contacto" data-plan="Web y pedidos">Me interesa</a>
+      </div>
+      <div class="pl aparece">
+        <h3>Completo</h3><p class="para">Para locales que quieren ordenar toda la operación.</p>
+        <ul>
+          <li class="mas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Todo lo del plan Web y pedidos</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Pantalla de cocina con tiempos</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>App del repartidor con ruta</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Clientes frecuentes y promociones</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>Reportes de ventas, márgenes y zonas</li>
+        </ul>
+        <a class="btn sec" href="#contacto" data-plan="Completo">Me interesa</a>
+      </div>
+    </div>
+    <p class="nota-precio">La tarifa es mensual y depende del plan. Te la contamos en la primera conversación, sin letra chica.</p>
+    <div class="fundadores aparece">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.8Z"/></svg></div>
+      <div><h3>Programa de locales fundadores</h3><p>Los primeros locales que se suman pueden pagar sus primeros meses con consumo en el local. Cupos limitados.</p></div>
+      <a class="btn pri" href="#contacto" data-plan="Locales fundadores">Postular mi local</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <div class="piloto aparece">
+      <img src="media/labarra/logo.webp" alt="Logo de La Barra Susheria" width="84" height="84">
+      <div><span class="eti" style="margin-bottom:6px">Local piloto</span><h3>La Barra Susheria, San Bernardo</h3><p>Más de 180 productos cargados, carta con ilustraciones propias, despacho por anillos y pedidos con seguimiento.</p></div>
+      <a class="btn sec" href="web/?n=labarra" target="_blank" rel="noopener">Ver su web</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="preguntas" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-cab centro aparece"><span class="eti">Preguntas frecuentes</span><h2>Lo que nos preguntan los locales</h2></div>
+    <div class="faq">
+      <details><summary>¿Necesito saber de computación?</summary><p>No. Nosotros cargamos tu carta y configuramos la web. Después, cambiar un precio o marcar un producto como agotado se hace desde el celular en un par de toques.</p></details>
+      <details><summary>¿Cobran comisión por pedido?</summary><p>No. Pagas una tarifa mensual fija según tu plan. Lo que vendes es tuyo, y el pago del cliente llega directo a ti.</p></details>
+      <details><summary>¿Puedo usar mi propio dominio?</summary><p>Sí. Tu web parte con una dirección dentro de PrestoPronto y, si ya tienes un dominio, lo apuntamos a tu web. El dominio sigue siendo tuyo.</p></details>
+      <details><summary>¿Cómo calculan el costo del despacho?</summary><p>Defines zonas por distancia desde tu local, por ejemplo hasta 2 km, de 2 a 4 km, y así. El cliente comparte su ubicación o escribe su dirección, y el sistema le muestra el costo que corresponde. Fuera de tu zona, solo se ofrece retiro.</p></details>
+      <details><summary>¿Cómo me pagan los clientes?</summary><p>Como tú prefieras: efectivo, tarjeta o transferencia al recibir, o transferencia previa con los datos de tu cuenta. PrestoPronto no toca el dinero.</p></details>
+      <details><summary>¿Sirve para una botillería o una cafetería?</summary><p>Sí. La carta se adapta a cualquier rubro: categorías, variantes como tamaño o sabor, fotos y precios. Si vendes bebidas alcohólicas, la venta sigue siendo tu responsabilidad, igual que en el mesón.</p></details>
+      <details><summary>¿Qué pasa con mis datos si me voy?</summary><p>Tu carta y la lista de tus clientes son tuyas. Si decides dejar el servicio, te las entregamos en una planilla.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec contacto" id="contacto">
+  <div class="wrap">
+    <div class="aparece">
+      <span class="eti">Conversemos</span>
+      <h2>Cuéntanos de tu local y te mostramos cómo se vería tu web</h2>
+      <p class="lead" style="margin-top:16px">Completa estos datos y te contactamos. Si prefieres, escríbenos directo.</p>
+    </div>
+    <form class="form aparece" id="form" novalidate>
+      <div class="fila">
+        <label>Tu nombre<input id="c-nombre" autocomplete="name" required></label>
+        <label>Nombre del local<input id="c-local" required></label>
+      </div>
+      <div class="fila">
+        <label>Rubro<select id="c-rubro"><option>Sushi o nikkei</option><option>Pizzería</option><option>Sanguchería o comida rápida</option><option>Cafetería o pastelería</option><option>Botillería</option><option>Comida casera</option><option>Otro</option></select></label>
+        <label>Comuna<input id="c-comuna" autocomplete="address-level2"></label>
+      </div>
+      <div class="fila">
+        <label>Teléfono o WhatsApp<input id="c-tel" type="tel" inputmode="tel" autocomplete="tel"></label>
+        <label>Plan que te interesa<select id="c-plan"><option>Aún no sé</option><option>Web</option><option>Web y pedidos</option><option>Completo</option><option>Locales fundadores</option></select></label>
+      </div>
+      <label>Algo más que quieras contarnos<textarea id="c-msg" rows="3" placeholder="Ej.: hoy recibimos pedidos solo por WhatsApp y queremos ordenarnos"></textarea></label>
+      <div class="err" id="c-err" role="alert"></div>
+      <div class="btns">
+        <button class="btn wa" type="button" id="c-wa" hidden><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm4.5 12.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3 1 2.6 1.1 2.8.1.2 1.9 2.9 4.6 4 1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2Z"/></svg>Enviar por WhatsApp</button>
+        <button class="btn pri" type="submit" id="c-mail">Enviar por correo</button>
+      </div>
+      <small>Al enviar se abre tu WhatsApp o tu correo con el mensaje listo. Tus datos solo se usan para responderte.</small>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><a class="marca" href="#" aria-label="PrestoPronto"><svg viewBox="0 0 487 100" role="img" aria-label="PrestoPronto"><rect width="100" height="100" rx="23" fill="#E53935"/><g transform="translate(50 50) scale(0.9) rotate(45) translate(-50 -53)"><path fill="#FFFFFF" d="M38.5 50 Q29 56 28 72 L38.5 67 Z M61.5 50 Q71 56 72 72 L61.5 67 Z"/><path fill="#FFFFFF" d="M50 12 C64 22 65 44 62 69 L38 69 C35 44 36 22 50 12 Z"/><g fill="#E53935"><rect x="44.8" y="25" width="2.6" height="13" rx="1.3"/><rect x="48.7" y="25" width="2.6" height="13" rx="1.3"/><rect x="52.6" y="25" width="2.6" height="13" rx="1.3"/><path d="M44.8 35.5 H55.2 V39.5 Q55.2 44.5 51.8 45.5 H48.2 Q44.8 44.5 44.8 39.5 Z"/><rect x="48.2" y="44" width="3.6" height="19" rx="1.8"/></g><path fill="#FFFFFF" d="M43.5 73 H56.5 Q56 82 50 91 Q44 82 43.5 73 Z"/><g stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"><line x1="35" y1="78" x2="35" y2="86"/><line x1="65" y1="78" x2="65" y2="84"/></g></g><path fill="currentColor" d="M140.7 56.2H135.5V69.0H125.0V31.2H140.7Q145.2 31.2 148.4 32.8Q151.6 34.4 153.2 37.2Q154.8 40.1 154.8 43.8Q154.8 47.2 153.2 50.0Q151.6 52.8 148.5 54.5Q145.3 56.2 140.7 56.2ZM144.1 43.8Q144.1 39.6 139.6 39.6H135.5V47.8H139.6Q144.1 47.8 144.1 43.8Z M178.8 38.6V49.8H175.9Q172.4 49.8 170.8 51.2Q169.1 52.5 169.1 55.8V69.0H158.6V38.9H169.1V44.2Q170.9 41.6 173.4 40.1Q175.9 38.6 178.8 38.6Z M210.7 56.0H190.8Q191.0 58.5 192.2 59.7Q193.4 60.9 195.3 60.9Q197.9 60.9 199.0 58.6H210.2Q209.5 61.7 207.5 64.1Q205.5 66.5 202.5 67.9Q199.4 69.3 195.7 69.3Q191.3 69.3 187.8 67.4Q184.3 65.6 182.4 62.1Q180.4 58.6 180.4 53.9Q180.4 49.2 182.4 45.7Q184.3 42.3 187.7 40.4Q191.2 38.5 195.7 38.5Q200.1 38.5 203.6 40.3Q207.0 42.2 208.9 45.6Q210.9 49.0 210.9 53.6Q210.9 54.8 210.7 56.0ZM200.1 50.9Q200.1 49.0 198.9 47.9Q197.6 46.8 195.6 46.8Q193.7 46.8 192.5 47.9Q191.3 48.9 190.9 50.9Z M213.2 58.8H223.4Q223.6 60.3 224.7 61.1Q225.8 61.9 227.5 61.9Q228.8 61.9 229.5 61.3Q230.3 60.8 230.3 59.9Q230.3 58.8 229.0 58.3Q227.8 57.7 225.0 57.1Q221.7 56.5 219.6 55.7Q217.5 54.9 215.9 53.0Q214.3 51.2 214.3 48.1Q214.3 45.4 215.7 43.3Q217.2 41.1 220.0 39.8Q222.8 38.5 226.8 38.5Q232.7 38.5 236.1 41.4Q239.4 44.3 240.0 49.0H230.5Q230.2 47.6 229.2 46.8Q228.2 46.0 226.6 46.0Q225.3 46.0 224.6 46.5Q223.9 47.0 223.9 47.8Q223.9 48.9 225.2 49.5Q226.4 50.0 229.1 50.6Q232.4 51.3 234.6 52.2Q236.8 53.0 238.4 54.9Q240.0 56.8 240.0 60.1Q240.0 62.7 238.5 64.8Q237.0 66.9 234.2 68.1Q231.3 69.3 227.5 69.3Q223.5 69.3 220.3 68.0Q217.1 66.6 215.2 64.2Q213.4 61.8 213.2 58.8Z M262.5 60.0V69.0H257.9Q246.4 69.0 246.4 57.5V47.6H242.7V38.9H246.4V31.6H257.0V38.9H262.4V47.6H257.0V57.7Q257.0 58.9 257.5 59.5Q258.1 60.0 259.4 60.0Z M265.2 53.9Q265.2 49.2 267.2 45.7Q269.3 42.3 272.9 40.4Q276.4 38.5 280.9 38.5Q285.4 38.5 289.0 40.4Q292.5 42.3 294.6 45.7Q296.7 49.2 296.7 53.9Q296.7 58.6 294.6 62.1Q292.5 65.6 289.0 67.4Q285.4 69.3 280.9 69.3Q276.4 69.3 272.8 67.4Q269.2 65.6 267.2 62.1Q265.2 58.6 265.2 53.9ZM286.0 53.9Q286.0 50.8 284.5 49.2Q283.1 47.6 280.9 47.6Q278.8 47.6 277.3 49.2Q275.9 50.8 275.9 53.9Q275.9 57.0 277.3 58.6Q278.7 60.2 280.9 60.2Q283.1 60.2 284.5 58.6Q286.0 56.9 286.0 53.9Z"/><path fill="#E53935" d="M316.2 56.2H311.0V69.0H300.5V31.2H316.2Q320.8 31.2 324.0 32.8Q327.2 34.4 328.8 37.2Q330.4 40.1 330.4 43.8Q330.4 47.2 328.8 50.0Q327.2 52.8 324.0 54.5Q320.8 56.2 316.2 56.2ZM319.7 43.8Q319.7 39.6 315.2 39.6H311.0V47.8H315.2Q319.7 47.8 319.7 43.8Z M354.4 38.6V49.8H351.5Q348.0 49.8 346.4 51.2Q344.7 52.5 344.7 55.8V69.0H334.2V38.9H344.7V44.2Q346.5 41.6 349.0 40.1Q351.5 38.6 354.4 38.6Z M356.0 53.9Q356.0 49.2 358.1 45.7Q360.1 42.3 363.7 40.4Q367.3 38.5 371.8 38.5Q376.3 38.5 379.8 40.4Q383.4 42.3 385.5 45.7Q387.5 49.2 387.5 53.9Q387.5 58.6 385.5 62.1Q383.4 65.6 379.8 67.4Q376.2 69.3 371.7 69.3Q367.2 69.3 363.6 67.4Q360.1 65.6 358.0 62.1Q356.0 58.6 356.0 53.9ZM376.9 53.9Q376.9 50.8 375.4 49.2Q373.9 47.6 371.8 47.6Q369.6 47.6 368.2 49.2Q366.7 50.8 366.7 53.9Q366.7 57.0 368.1 58.6Q369.5 60.2 371.7 60.2Q373.9 60.2 375.4 58.6Q376.9 56.9 376.9 53.9Z M422.4 51.4V69.0H411.9V52.8Q411.9 50.2 410.5 48.8Q409.2 47.3 406.9 47.3Q404.6 47.3 403.2 48.8Q401.9 50.2 401.9 52.8V69.0H391.4V38.9H401.9V43.2Q403.3 41.1 405.6 39.9Q408.0 38.6 411.1 38.6Q416.2 38.6 419.3 42.1Q422.4 45.5 422.4 51.4Z M445.5 60.0V69.0H440.9Q429.4 69.0 429.4 57.5V47.6H425.7V38.9H429.4V31.6H439.9V38.9H445.4V47.6H439.9V57.7Q439.9 58.9 440.5 59.5Q441.1 60.0 442.4 60.0Z M448.1 53.9Q448.1 49.2 450.2 45.7Q452.3 42.3 455.8 40.4Q459.4 38.5 463.9 38.5Q468.4 38.5 472.0 40.4Q475.5 42.3 477.6 45.7Q479.7 49.2 479.7 53.9Q479.7 58.6 477.6 62.1Q475.5 65.6 471.9 67.4Q468.3 69.3 463.8 69.3Q459.3 69.3 455.8 67.4Q452.2 65.6 450.2 62.1Q448.1 58.6 448.1 53.9ZM469.0 53.9Q469.0 50.8 467.5 49.2Q466.0 47.6 463.9 47.6Q461.8 47.6 460.3 49.2Q458.9 50.8 458.9 53.9Q458.9 57.0 460.3 58.6Q461.6 60.2 463.8 60.2Q466.0 60.2 467.5 58.6Q469.0 56.9 469.0 53.9Z"/></svg></a><p>Web, carta y pedidos para locales de comida y bebida. Hecho en Chile.</p></div>
+    <div><h4>Producto</h4><ul><li><a href="#que-hacemos">Qué hacemos</a></li><li><a href="#planes">Planes</a></li><li><a href="web/?n=labarra" target="_blank" rel="noopener">Local piloto</a></li><li><a href="#preguntas">Preguntas</a></li></ul></div>
+    <div><h4>Contacto</h4><ul><li><a href="#contacto">Conversemos</a></li><li id="pie-mail"></li><li id="pie-wa"></li><li><a href="sitio/">Ingreso negocios</a></li></ul></div>
+    <div class="legal">© <span id="anio"></span> PrestoPronto. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script>
+'use strict';
+/* CONFIGURACIÓN DE CONTACTO: cambia aquí el correo y el WhatsApp comercial (solo números, con 56 al inicio). Si el WhatsApp queda vacío, el botón no aparece. */
+const CONTACTO_CORREO = 'leyton.johns@gmail.com';
+const CONTACTO_WHATSAPP = '';
+
+const $=s=>document.querySelector(s);
+$('#anio').textContent=new Date().getFullYear();
+if(CONTACTO_CORREO) $('#pie-mail').innerHTML=`<a href="mailto:${CONTACTO_CORREO}">${CONTACTO_CORREO}</a>`;
+if(CONTACTO_WHATSAPP){
+  const d=CONTACTO_WHATSAPP.replace(/\D/g,'');
+  $('#pie-wa').innerHTML=`<a href="https://wa.me/${d}" target="_blank" rel="noopener">WhatsApp</a>`;
+  $('#c-wa').hidden=false;
+}
+
+/* Menú en celular */
+const hamb=$('#hamb'), panel=$('#panel-mov');
+hamb.onclick=()=>{ const a=panel.classList.toggle('abierto'); hamb.setAttribute('aria-expanded',a); };
+panel.addEventListener('click',e=>{ if(e.target.closest('a')){ panel.classList.remove('abierto'); hamb.setAttribute('aria-expanded','false'); } });
+addEventListener('scroll',()=>$('#top').classList.toggle('borde',scrollY>8),{passive:true});
+
+/* Botones de plan: dejan elegido el plan en el formulario */
+document.querySelectorAll('[data-plan]').forEach(b=>b.addEventListener('click',()=>{ $('#c-plan').value=b.dataset.plan; }));
+
+/* Aparición suave al hacer scroll */
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visto'); io.unobserve(e.target); } }),{rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.aparece').forEach(el=>io.observe(el));
+} else document.querySelectorAll('.aparece').forEach(el=>el.classList.add('visto'));
+
+/* Formulario: arma el mensaje y lo abre en WhatsApp o en el correo */
+function mensaje(){
+  const v=id=>$('#'+id).value.trim();
+  if(v('c-nombre').length<2||v('c-local').length<2){ $('#c-err').textContent='Escribe tu nombre y el nombre del local.'; return null; }
+  if(!v('c-tel')){ $('#c-err').textContent='Déjanos un teléfono o WhatsApp para contactarte.'; return null; }
+  $('#c-err').textContent='';
+  return `Hola PrestoPronto, quiero saber más.\n\nNombre: ${v('c-nombre')}\nLocal: ${v('c-local')}\nRubro: ${v('c-rubro')}\nComuna: ${v('c-comuna')||'Sin indicar'}\nTeléfono: ${v('c-tel')}\nPlan: ${v('c-plan')}${v('c-msg')?'\n\n'+v('c-msg'):''}`;
+}
+$('#form').addEventListener('submit',e=>{
+  e.preventDefault(); const m=mensaje(); if(!m) return;
+  location.href=`mailto:${CONTACTO_CORREO}?subject=${encodeURIComponent('Quiero PrestoPronto para '+$('#c-local').value.trim())}&body=${encodeURIComponent(m)}`;
+});
+$('#c-wa').addEventListener('click',()=>{ const m=mensaje(); if(!m) return; window.open(`https://wa.me/${CONTACTO_WHATSAPP.replace(/\D/g,'')}?text=${encodeURIComponent(m)}`,'_blank','noopener'); });
+</script>
+</body>
+</html>
