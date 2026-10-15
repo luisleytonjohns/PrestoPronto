@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PrestoPronto | Consola</title>
 <!--
-  PrestoPronto, versión 1.2
+  PrestoPronto, versión 1.3
   Archivo: consola/index.html (Consola de la plataforma; usa ../api.js)
   Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
 -->
@@ -480,7 +480,9 @@ function subDatos(){
   $('#sub').innerHTML=`<div class="panel"><div class="grid g2">
     ${campo('d-nombre','Nombre',n.nombre)}${campo('d-direccion','Dirección',n.direccion)}${campo('d-comuna','Comuna',n.comuna)}
     ${campo('d-whatsapp','WhatsApp',n.whatsapp)}${campo('d-telefono','Teléfono',n.telefono)}${campo('d-instagram','Instagram',n.instagram)}
-    ${campo('d-horario','Horario',n.horario)}${campo('d-pedido','Pedido mínimo (pesos)',n.pedido_minimo)}
+    <label class="f">Horario<input id="d-horario" value="${esc(n.horario||'')}" placeholder="Mar a Dom 12:30-22:30; Vie y Sáb 12:30-23:30; Lun cerrado">
+      <small class="muted" style="font-weight:400">${FICHA.estado_horario&&FICHA.estado_horario.conocido?'Ahora: '+esc(FICHA.estado_horario.abierto?'abierto. ':'cerrado. ')+esc(FICHA.estado_horario.texto):'Formato: días y horas separados por punto y coma. Sin un horario válido, la web acepta pedidos a toda hora.'}</small></label>
+    ${campo('d-pedido','Pedido mínimo (pesos)',n.pedido_minimo)}
     ${campo('d-lat','Latitud del local',n.lat)}${campo('d-lng','Longitud del local',n.lng)}</div>
     <p class="muted" style="font-size:13px">Las coordenadas se copian desde Google Maps (clic derecho sobre el local). Son la base del cálculo de anillos y despacho.</p>
     <div class="row"><span class="spacer"></span><button class="btn pri" type="button" id="d-guardar">Guardar datos</button></div></div>`;
@@ -605,20 +607,55 @@ async function dialogoUsuario(neg){
 }
 
 /* ---------- Sitio ---------- */
+function opciones(lista, actual){ return lista.map(([k,v])=>`<option value="${k}" ${actual===k?'selected':''}>${v}</option>`).join(''); }
 function subSitio(){
   const n=FICHA.negocio;
   $('#sub').innerHTML=`<div class="panel"><h2>Dirección y dominio</h2><div class="grid g2">
     ${campo('s-slug','Dirección web (slug)',n.slug)}${campo('s-sub','Subdominio en la plataforma',n.subdominio)}
     ${campo('s-dom','Dominio propio (opcional)',n.dominio_propio)}
-    <label class="f">Estado del dominio<select id="s-edom">${[['','Sin dominio propio'],['PENDIENTE','Pendiente'],['VERIFICADO','Verificado'],['ACTIVO','Activo']].map(([k,v])=>`<option value="${k}" ${(n.estado_dominio||'')===k?'selected':''}>${v}</option>`).join('')}</select></label></div>
-    <p class="muted" style="font-size:13px">En el demo, la web del negocio se abre en <a href="${esc(urlWeb(n.slug))}" target="_blank" rel="noopener">${esc(urlWeb(n.slug))}</a> (se habilita con la web conectada). El dominio propio queda registrado para la migración.</p></div>
+    <label class="f">Estado del dominio<select id="s-edom">${opciones([['','Sin dominio propio'],['PENDIENTE','Pendiente'],['VERIFICADO','Verificado'],['ACTIVO','Activo']],n.estado_dominio||'')}</select></label></div>
+    <p class="muted" style="font-size:13px">La web del negocio está en <a href="${esc(urlWeb(n.slug))}" target="_blank" rel="noopener">${esc(urlWeb(n.slug))}</a>. El dominio propio queda registrado para la migración.</p></div>
     <div class="panel"><h2>Apariencia</h2><div class="grid g3">
-      <label class="f">Plantilla<select id="s-pl">${[['clasica','Clásica'],['vitrina','Vitrina'],['express','Express']].map(([k,v])=>`<option value="${k}" ${(n.plantilla||'clasica')===k?'selected':''}>${v}</option>`).join('')}</select></label>
+      <label class="f">Plantilla<select id="s-pl">${opciones([['clasica','Clásica'],['vitrina','Vitrina'],['express','Express']],n.plantilla||'clasica')}</select></label>
+      <label class="f">Modo<select id="s-modo">${opciones([['claro','Claro'],['oscuro','Oscuro']],n.modo||'claro')}</select></label>
+      <label class="f">Tipografía<select id="s-tipo">${opciones([['moderna','Moderna'],['urbana','Urbana'],['clasica','Clásica'],['amable','Amable']],n.tipografia||'moderna')}</select></label>
       <label class="f">Color principal<input type="color" id="s-col" value="${esc(n.color_acento||'#E53935')}" style="height:42px;padding:4px"></label>
-      ${campo('s-logo','Enlace del logo',n.logo,'url')}</div>
-    <p class="muted" style="font-size:13px">El dueño podrá cambiar la apariencia desde su Administrador del sitio cuando conectemos la web.</p>
-    <div class="row"><span class="spacer"></span><button class="btn pri" type="button" id="s-guardar">Guardar sitio</button></div></div>`;
-  $('#s-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,slug:val('s-slug'),subdominio:val('s-sub'),dominio_propio:val('s-dom'),estado_dominio:val('s-edom'),plantilla:val('s-pl'),color_acento:val('s-col').toUpperCase(),logo:val('s-logo')}); await recargarFicha(); },'Sitio guardado.');
+      ${campo('s-logo','Enlace del logo',n.logo,'url')}</div></div>
+    <div class="panel"><h2>Contenido de la web</h2><div class="grid g2">
+      ${campo('s-esl','Frase bajo el nombre',n.eslogan)}${campo('s-aviso','Aviso destacado (vacío para ocultarlo)',n.aviso)}
+      ${campo('s-fb','Facebook (usuario o enlace)',n.facebook)}${campo('s-tt','TikTok (usuario o enlace)',n.tiktok)}
+      ${campo('s-maps','Enlace de Google Maps (opcional)',n.maps_url,'url')}</div>
+      <p class="muted" style="font-size:13px">Instagram y WhatsApp se editan en la pestaña Datos. Sin enlace de Maps, el botón Cómo llegar busca la dirección.</p>
+      <div class="row"><span class="spacer"></span><button class="btn pri" type="button" id="s-guardar">Guardar sitio</button></div></div>
+    <div class="panel"><h2>Transferencia previa</h2>
+      <p class="muted" style="margin-top:0;font-size:13px">Si completas banco, tipo de cuenta, número, RUT y titular, el cliente puede elegir pagar por transferencia antes de que preparen su pedido. Con un dato vacío, la opción no aparece.</p>
+      <div class="grid g3">${campo('b-banco','Banco',n.banco)}${campo('b-tipo','Tipo de cuenta',n.tipo_cuenta)}${campo('b-num','Número de cuenta',n.numero_cuenta)}
+      ${campo('b-rut','RUT del titular',n.rut_titular)}${campo('b-tit','Titular',n.titular_cuenta)}${campo('b-mail','Correo para comprobantes',n.email_transferencia,'email')}</div>
+      <div class="row"><span class="spacer"></span><button class="btn pri" type="button" id="b-guardar">Guardar datos bancarios</button></div></div>
+    <div class="panel"><h2>Zonas de despacho</h2>
+      <p class="muted" style="margin-top:0;font-size:13px">Distancia en línea recta desde el local. Sin costo, el cliente ve "despacho a confirmar". Lo que queda fuera del último tramo no se despacha.</p>
+      <div class="tw"><table class="t"><thead><tr><th>Nombre</th><th>Desde km</th><th>Hasta km</th><th>Costo</th><th>Minutos extra</th><th>Activo</th><th></th></tr></thead><tbody id="z-filas"></tbody></table></div>
+      <div class="row mt"><button class="btn sm" type="button" id="z-mas">Agregar tramo</button><span class="spacer"></span><button class="btn pri" type="button" id="z-guardar">Guardar zonas</button></div></div>`;
+  let Z=(FICHA.anillos||[]).slice().sort((a,b)=>Number(a.km_desde)-Number(b.km_desde)).map(a=>({anillo_id:a.anillo_id,nombre:a.nombre,km_desde:a.km_desde,km_hasta:a.km_hasta,costo_despacho:a.costo_despacho,tiempo_extra_min:a.tiempo_extra_min,activo:a.activo||'SI'}));
+  const inp=(i,k,v,w)=>`<input data-z="${i}" data-k="${k}" value="${esc(v==null?'':v)}" style="width:${w}px" ${k==='nombre'?'':'inputmode="decimal"'}>`;
+  const pintarZ=()=>{
+    $('#z-filas').innerHTML=Z.length?Z.map((a,i)=>`<tr><td>${inp(i,'nombre',a.nombre,130)}</td><td>${inp(i,'km_desde',a.km_desde,70)}</td><td>${inp(i,'km_hasta',a.km_hasta,70)}</td>
+      <td>${inp(i,'costo_despacho',a.costo_despacho,90)}</td><td>${inp(i,'tiempo_extra_min',a.tiempo_extra_min,70)}</td>
+      <td><select data-z="${i}" data-k="activo">${opciones([['SI','Sí'],['NO','No']],a.activo==='NO'?'NO':'SI')}</select></td>
+      <td><button class="btn sm danger" type="button" data-zq="${i}">Quitar</button></td></tr>`).join(''):'<tr><td colspan="7" class="muted">Sin zonas: el local solo podrá ofrecer retiro.</td></tr>';
+    $$('[data-z]').forEach(e=>e.oninput=e.onchange=()=>{ Z[+e.dataset.z][e.dataset.k]=e.value; });
+    $$('[data-zq]').forEach(b=>b.onclick=()=>{ Z.splice(+b.dataset.zq,1); pintarZ(); });
+  };
+  pintarZ();
+  $('#z-mas').onclick=()=>{ const u=Z[Z.length-1]; const d=u?Number(u.km_hasta)||0:0; Z.push({nombre:'Anillo '+(Z.length+1),km_desde:d,km_hasta:d+2,costo_despacho:'',tiempo_extra_min:'',activo:'SI'}); pintarZ(); };
+  $('#z-guardar').onclick=()=>tarea(async()=>{
+    const usados={}; const lista=Z.map((a,i)=>{ let id=a.anillo_id||''; if(!id||usados[id]){ let k=i+1; while(usados['A'+k]||Z.some(x=>x!==a&&x.anillo_id==='A'+k)) k++; id='A'+k; } usados[id]=true; return Object.assign({},a,{anillo_id:id}); });
+    await PP_API.guardarAnillos(n.negocio_id,lista); await recargarFicha(); },'Zonas guardadas.');
+  $('#s-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,slug:val('s-slug'),subdominio:val('s-sub'),dominio_propio:val('s-dom'),estado_dominio:val('s-edom'),
+    plantilla:val('s-pl'),modo:val('s-modo'),tipografia:val('s-tipo'),color_acento:val('s-col').toUpperCase(),logo:val('s-logo'),
+    eslogan:val('s-esl'),aviso:val('s-aviso'),facebook:val('s-fb'),tiktok:val('s-tt'),maps_url:val('s-maps')}); await recargarFicha(); },'Sitio guardado.');
+  $('#b-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,banco:val('b-banco'),tipo_cuenta:val('b-tipo'),numero_cuenta:val('b-num'),
+    rut_titular:val('b-rut'),titular_cuenta:val('b-tit'),email_transferencia:val('b-mail')}); await recargarFicha(); },'Datos bancarios guardados.');
 }
 
 /* ---------- Historial ---------- */
