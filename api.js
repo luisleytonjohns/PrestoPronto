@@ -1,13 +1,15 @@
 /**
- * PrestoPronto, versión 1.2
- * Archivo: api.js (capa intermedia de comunicación; va en la raíz del sitio, junto a las carpetas consola y sitio)
+ * PrestoPronto, versión 1.3
+ * Archivo: api.js (capa intermedia de comunicación; va en la raíz del sitio, junto a las carpetas consola, sitio y web)
  * Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
  *
  * Regla: las pantallas nunca llaman al servidor directamente; todo pasa por este archivo.
  * Al migrar a la arquitectura definitiva se reescribe solo este archivo.
  *
  * CONFIGURACIÓN: pega aquí, una sola vez, la URL de la implementación de Apps Script (termina en /exec).
+ * Para el ingreso con Google en la web, pega también el ID de cliente OAuth (vacío = botón oculto).
  */
+const PP_GOOGLE_CLIENT_ID = '';
 const PP_URL_SERVIDOR = 'https://script.google.com/macros/s/AKfycbwAsJWpjmqTMjXj1KLHcUfUCTSMPaG-ETdR--lrFrAJCyqC0zKej5zpTztBDZDNFeqB/exec';
 
 const PP_API = (function () {
@@ -70,6 +72,7 @@ const PP_API = (function () {
     },
     tieneSesion: function () { return !!token(); },
     configurado: function () { return !!URL_SERVIDOR; },
+    googleClientId: function () { return PP_GOOGLE_CLIENT_ID; },
 
     /* ---------- Sesión ---------- */
     ingresar: async function (email, clave) {
@@ -122,6 +125,7 @@ const PP_API = (function () {
     registrarConsumo: function (consumo) { return llamar('registrarConsumo', { consumo: consumo }); },
     listarEquipo: function () { return llamar('listarEquipo'); },
     bitacora: function (filtros) { return llamar('bitacora', filtros || {}); },
+    guardarAnillos: function (negocioId, anillos) { return llamar('guardarAnillos', { negocio_id: negocioId, anillos: anillos }); },
     /** Pide una sesión de soporte; la pantalla abre después el Administrador del sitio en otra pestaña. */
     entrarComoNegocio: async function (negocioId) {
       const r = await llamar('entrarComoNegocio', { negocio_id: negocioId });
@@ -129,7 +133,29 @@ const PP_API = (function () {
       return r.negocio;
     },
 
-    /* ---------- Público (web del negocio) ---------- */
-    obtenerCartaPublica: function (negocio) { return llamar('carta', { negocio: negocio }); }
+    /* ---------- Web del negocio (clientes) ---------- */
+    obtenerCartaPublica: function (negocio) { return llamar('carta', { negocio: negocio }); },
+    webEnviarCodigo: function (negocio, email) { return llamar('webEnviarCodigo', { negocio: negocio, email: email }); },
+    webVerificarCodigo: async function (negocio, email, codigo) {
+      const p = await llamar('webVerificarCodigo', { negocio: negocio, email: email, codigo: codigo });
+      guardarToken(p.token, false);
+      return p;
+    },
+    webIngresarGoogle: async function (negocio, credencial) {
+      const p = await llamar('webGoogle', { negocio: negocio, credencial: credencial });
+      guardarToken(p.token, false);
+      return p;
+    },
+    webPerfil: function () { return llamar('webPerfil'); },
+    webCompletarPerfil: function (datos) { return llamar('webCompletarPerfil', datos); },
+    webCotizar: function (negocio, direccion) { return llamar('webCotizar', { negocio: negocio, direccion: direccion }); },
+    /** pedido: { items:[{producto_id, variante, cantidad}], tipo_entrega, medio_pago, direccion, nota } */
+    webCrearPedido: function (pedido) { return llamar('webCrearPedido', pedido); },
+    webPedido: function (pedidoId) { return llamar('webPedido', { pedido_id: pedidoId }); },
+    webMisPedidos: function () { return llamar('webMisPedidos'); },
+    webSalir: async function () {
+      try { await llamar('webSalir'); } catch (e) { /* igual se borra localmente */ }
+      borrarToken();
+    }
   };
 })();
