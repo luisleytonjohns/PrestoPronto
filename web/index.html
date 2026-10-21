@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  PrestoPronto, versión 1.3
+  PrestoPronto, versión 1.4
   Archivo: web/index.html (web del negocio para clientes; se abre como /web/?n=slug-del-negocio)
   Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
 -->
@@ -1021,7 +1021,7 @@ function abrirSeguimiento(id, inicial){
       ${pendiente&&t?`<div class="banco"><b>Transfiere ${pesos(p.total)} a:</b><br>${esc(t.titular)}<br>RUT ${esc(t.rut)}<br>${esc(t.banco)} · ${esc(t.tipo_cuenta)}<br>N° <b class="num">${esc(t.numero_cuenta)}</b>${t.email?'<br>'+esc(t.email):''}
         <br><button class="btn sec2 sm" type="button" id="s-copiar" style="margin-top:8px">Copiar datos</button></div>
         <p class="nota">Indica <b>pedido #${esc(p.numero)}</b> en el comentario de la transferencia. El local prepara tu pedido cuando la recibe.</p>`:''}
-      ${malo?`<div class="cerrado-aviso">Tu pedido fue ${p.estado==='RECHAZADO'?'rechazado por el local':'cancelado'}. Si tienes dudas, escríbele al local por WhatsApp.</div>`
+      ${malo?`<div class="cerrado-aviso">Tu pedido fue ${p.estado==='RECHAZADO'?'rechazado por el local':'cancelado'}.${p.motivo_rechazo?' Motivo: '+esc(p.motivo_rechazo)+'.':''} Si tienes dudas, escríbele al local por WhatsApp.</div>`
       :`<ol class="pasos">${pasosDe(p).map((x,i)=>`<li class="${i<k||(fin&&i<=k)?'hecho':i===Math.ceil(k)?'actual':''}"><span class="p">${i<k||(fin&&i<=k)?'✓':i+1}</span><div><b>${x[1]}</b><small>${p.estado==='LISTO'&&p.tipo_entrega==='DELIVERY'&&i===2?'Tu pedido está listo y sale pronto':x[2]}</small></div></li>`).join('')}</ol>`}
       ${p.repartidor&&p.estado==='EN_CAMINO'?`<div class="repa"><div class="av">${esc((p.repartidor.nombre||'?')[0])}</div><div><b>${esc(p.repartidor.nombre)} te lo lleva</b><small style="color:var(--txt2)">${esc([p.repartidor.vehiculo,p.repartidor.color,p.repartidor.patente?'patente '+p.repartidor.patente:''].filter(Boolean).join(' · '))}</small></div></div>`:''}
       <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700">Detalle del pedido</summary>
