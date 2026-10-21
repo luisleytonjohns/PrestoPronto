@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PrestoPronto | Consola</title>
 <!--
-  PrestoPronto, versión 1.3
+  PrestoPronto, versión 1.4
   Archivo: consola/index.html (Consola de la plataforma; usa ../api.js)
   Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
 -->
@@ -241,6 +241,7 @@ function toast(m,err){ const t=$('#toast'); t.textContent=m; t.className=err?'er
 function cargando(on){ $('#cargando').hidden=!on; }
 async function tarea(fn, ok){ cargando(true); try{ const r=await fn(); if(ok) toast(ok); return r; } catch(e){ toast(e.message,true); throw e; } finally{ cargando(false); } }
 function urlSitio(){ return new URL('../sitio/', location.href).href; }
+function urlCocina(slug){ return new URL('../cocina/?n='+encodeURIComponent(slug), location.href).href; }
 function urlWeb(slug){ return new URL('../web/?n='+encodeURIComponent(slug), location.href).href; }
 function val(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
 
@@ -262,7 +263,7 @@ function errorEnDialogo(m){ let e=$('#dlg-err'); if(!e){ $('#dlg-b').insertAdjac
 function mostrarAcceso(a){
   const esPin=!!a.pin;
   const msj = esPin
-    ? `Hola ${a.nombre}, tu acceso a PrestoPronto (${ROLES[a.rol]}):\nNegocio: ${a.negocio}\nPIN: ${a.pin}\nNo lo compartas con nadie.`
+    ? `Hola ${a.nombre}, tu acceso a PrestoPronto (${ROLES[a.rol]}):\n${a.rol==='COCINA'?'Ingresa en '+urlCocina(a.negocio)+'\n':''}Negocio: ${a.negocio}\nPIN: ${a.pin}\nNo lo compartas con nadie.`
     : `Hola ${a.nombre}, tu acceso a PrestoPronto:\nIngresa en ${a.rol==='SUPERADMIN'?location.href:urlSitio()}\nCorreo: ${a.email}\nClave temporal: ${a.clave}\nTe pedirá crear tu propia clave al entrar.`;
   return dialogo('Acceso de '+a.nombre, `
     <div class="credencial">${esPin?`PIN de ${esc(ROLES[a.rol])}<br><code>${esc(a.pin)}</code>`:`Correo: <b>${esc(a.email)}</b><br>Clave temporal: <code>${esc(a.clave)}</code>`}</div>
@@ -614,13 +615,15 @@ function subSitio(){
     ${campo('s-slug','Dirección web (slug)',n.slug)}${campo('s-sub','Subdominio en la plataforma',n.subdominio)}
     ${campo('s-dom','Dominio propio (opcional)',n.dominio_propio)}
     <label class="f">Estado del dominio<select id="s-edom">${opciones([['','Sin dominio propio'],['PENDIENTE','Pendiente'],['VERIFICADO','Verificado'],['ACTIVO','Activo']],n.estado_dominio||'')}</select></label></div>
-    <p class="muted" style="font-size:13px">La web del negocio está en <a href="${esc(urlWeb(n.slug))}" target="_blank" rel="noopener">${esc(urlWeb(n.slug))}</a>. El dominio propio queda registrado para la migración.</p></div>
+    <p class="muted" style="font-size:13px">La web del negocio está en <a href="${esc(urlWeb(n.slug))}" target="_blank" rel="noopener">${esc(urlWeb(n.slug))}</a>. El dominio propio queda registrado para la migración.</p>
+    <p class="muted" style="font-size:13px">La cocina entra con su PIN en <a href="${esc(urlCocina(n.slug))}" target="_blank" rel="noopener">${esc(urlCocina(n.slug))}</a>.</p></div>
     <div class="panel"><h2>Apariencia</h2><div class="grid g3">
       <label class="f">Plantilla<select id="s-pl">${opciones([['clasica','Clásica'],['vitrina','Vitrina'],['express','Express']],n.plantilla||'clasica')}</select></label>
       <label class="f">Modo<select id="s-modo">${opciones([['claro','Claro'],['oscuro','Oscuro']],n.modo||'claro')}</select></label>
       <label class="f">Tipografía<select id="s-tipo">${opciones([['moderna','Moderna'],['urbana','Urbana'],['clasica','Clásica'],['amable','Amable']],n.tipografia||'moderna')}</select></label>
       <label class="f">Color principal<input type="color" id="s-col" value="${esc(n.color_acento||'#E53935')}" style="height:42px;padding:4px"></label>
-      ${campo('s-logo','Enlace del logo',n.logo,'url')}</div></div>
+      ${campo('s-logo','Enlace del logo',n.logo,'url')}${campo('s-fav','Enlace del favicon (vacío: usa el logo)',n.favicon,'url')}</div>
+      <p class="muted" style="font-size:13px">El favicon es el ícono de la pestaña del navegador. Conviene una imagen cuadrada, de 192 × 192 píxeles o más.</p></div>
     <div class="panel"><h2>Contenido de la web</h2><div class="grid g2">
       ${campo('s-esl','Frase bajo el nombre',n.eslogan)}${campo('s-aviso','Aviso destacado (vacío para ocultarlo)',n.aviso)}
       ${campo('s-fb','Facebook (usuario o enlace)',n.facebook)}${campo('s-tt','TikTok (usuario o enlace)',n.tiktok)}
@@ -652,7 +655,7 @@ function subSitio(){
     const usados={}; const lista=Z.map((a,i)=>{ let id=a.anillo_id||''; if(!id||usados[id]){ let k=i+1; while(usados['A'+k]||Z.some(x=>x!==a&&x.anillo_id==='A'+k)) k++; id='A'+k; } usados[id]=true; return Object.assign({},a,{anillo_id:id}); });
     await PP_API.guardarAnillos(n.negocio_id,lista); await recargarFicha(); },'Zonas guardadas.');
   $('#s-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,slug:val('s-slug'),subdominio:val('s-sub'),dominio_propio:val('s-dom'),estado_dominio:val('s-edom'),
-    plantilla:val('s-pl'),modo:val('s-modo'),tipografia:val('s-tipo'),color_acento:val('s-col').toUpperCase(),logo:val('s-logo'),
+    plantilla:val('s-pl'),modo:val('s-modo'),tipografia:val('s-tipo'),color_acento:val('s-col').toUpperCase(),logo:val('s-logo'),favicon:val('s-fav'),
     eslogan:val('s-esl'),aviso:val('s-aviso'),facebook:val('s-fb'),tiktok:val('s-tt'),maps_url:val('s-maps')}); await recargarFicha(); },'Sitio guardado.');
   $('#b-guardar').onclick=()=>tarea(async()=>{ await PP_API.guardarNegocio({negocio_id:n.negocio_id,banco:val('b-banco'),tipo_cuenta:val('b-tipo'),numero_cuenta:val('b-num'),
     rut_titular:val('b-rut'),titular_cuenta:val('b-tit'),email_transferencia:val('b-mail')}); await recargarFicha(); },'Datos bancarios guardados.');
