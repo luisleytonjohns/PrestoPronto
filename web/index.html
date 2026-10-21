@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  PrestoPronto, versión 1.4
+  PrestoPronto, versión 1.5
   Archivo: web/index.html (web del negocio para clientes; se abre como /web/?n=slug-del-negocio)
   Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
 -->
@@ -280,6 +280,18 @@ label.f input,label.f select{border:1px solid var(--linea);border-radius:12px;pa
 .f textarea{border:1px solid var(--linea);border-radius:12px;padding:11px 12px;background:var(--fondo);font:inherit;font-weight:400;color:var(--txt);width:100%;resize:vertical}
 .btn:disabled{opacity:.6;cursor:wait}
 .btn.sec2{border:1px solid var(--linea)}
+.mapa{height:230px;border-radius:14px;margin-top:10px;overflow:hidden;background:var(--sup);z-index:0;position:relative}
+.chip-n{display:inline-block;font-size:12px;font-weight:700;background:#FFF4CC;color:#7A5B00;border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:middle}
+.estrella-t{color:#E0A800}
+.calif{border:1px solid var(--linea);border-radius:14px;padding:12px;margin-bottom:12px}
+.calif .estrellas{display:flex;gap:4px;justify-content:center;margin:8px 0}
+.calif .estrellas button{border:0;background:none;font-size:38px;line-height:1;color:#D8D2C8;padding:2px}
+.calif .estrellas button.on{color:#F2B705}
+.calif .etqs{display:flex;flex-wrap:wrap;gap:6px}
+.calif .etqs button{border:1px solid var(--linea);background:var(--fondo);border-radius:999px;padding:6px 11px;font-weight:600;font-size:13px}
+.calif .etqs button.on{background:var(--txt);color:var(--fondo);border-color:var(--txt)}
+
+.calif button{-webkit-tap-highlight-color:transparent;user-select:none}
 
 </style>
 </head>
@@ -306,6 +318,7 @@ label.f input,label.f select{border:1px solid var(--linea);border-radius:12px;pa
       <span class="pill" id="pill"><i></i><span id="pill-t"></span></span>
       <span id="horario-hoy"></span>
       <span id="modalidad"></span>
+      <span id="nota-local" hidden></span>
     </div>
     <div class="acciones" id="acciones"></div>
     <div class="aviso" id="aviso" hidden><b>Hoy</b><span id="aviso-t"></span></div>
@@ -509,6 +522,9 @@ function pintarNegocio(){
   $('#nombre').textContent=NEG.nombre;
   $('#eslogan').textContent=NEG.eslogan||[NEG.comuna].filter(Boolean).join('');
   $('#modalidad').textContent=soloWeb()?'Pedidos por WhatsApp':'Delivery y retiro';
+  const cal=NEG.calificacion;
+  $('#nota-local').hidden=!(cal&&!cal.nuevo&&cal.promedio);
+  if(cal&&!cal.nuevo&&cal.promedio) $('#nota-local').innerHTML=`<b class="estrella-t">★ ${String(cal.promedio).replace('.',',')}</b> (${cal.cantidad} opiniones)`;
   const avisoTxt=String(NEG.aviso||'').trim();
   $('#aviso').hidden=!avisoTxt; $('#aviso-t').textContent=avisoTxt;
 
@@ -914,7 +930,8 @@ function abrirPerfil(luego, primeraVez){
 }
 async function abrirCuenta(){
   const c=PERFIL.cliente||{};
-  hoja('Mi cuenta', `<div class="banco" style="margin-top:0"><b>${esc(c.nombre||'Sin nombre')}</b><br>${esc(c.email||'')}<br>${esc(c.telefono||'')}</div>
+  const mc=PERFIL.calificacion;
+  hoja('Mi cuenta', `<div class="banco" style="margin-top:0"><b>${esc(c.nombre||'Sin nombre')}</b><br>${esc(c.email||'')}<br>${esc(c.telefono||'')}${mc?`<br>Tu nota en ${esc(NEG.nombre)}: ${mc.nuevo?'<b>Nuevo</b> (aún sin suficientes calificaciones)':`<b class="estrella-t">★ ${String(mc.promedio).replace('.',',')}</b>`}`:''}</div>
     <div style="display:flex;gap:10px;margin-bottom:16px"><button class="btn sec2 sm" type="button" id="m-datos">Editar mis datos</button><button class="btn sec2 sm" type="button" id="m-salir">Cerrar sesión</button></div>
     <h3 class="disp" style="margin:0 0 10px">Mis pedidos</h3><div id="m-lista"><div class="spin"></div></div>`);
   $('#m-datos').onclick=()=>abrirPerfil(()=>abrirCuenta(), false);
@@ -925,7 +942,8 @@ async function abrirCuenta(){
     if(!lista.length){ cont.innerHTML='<p class="nota">Aún no tienes pedidos en este local.</p>'; return; }
     cont.innerHTML=`<div class="lista-ped">${lista.map((p,i)=>`<div class="ped"><div class="row2"><b>Pedido #${esc(p.numero)}</b><span class="est ${esc(p.estado)}">${esc(nombreEstado(p))}</span><span style="margin-left:auto" class="num"><b>${pesos(p.total)}</b></span></div>
       <small>${esc(fechaCorta(p.fecha_hora))} · ${p.tipo_entrega==='DELIVERY'?'Delivery':'Retiro'} · ${p.items.reduce((s,x)=>s+x.cantidad,0)} productos</small>
-      <div class="row2" style="margin-top:8px"><button class="btn sec2 sm" type="button" data-ver="${i}">Ver</button><button class="btn sm" type="button" data-repetir="${i}">Repetir</button></div></div>`).join('')}</div>`;
+      <div class="row2" style="margin-top:8px"><button class="btn sec2 sm" type="button" data-ver="${i}">Ver</button><button class="btn sm" type="button" data-repetir="${i}">Repetir</button>${p.calificar?`<button class="btn sec2 sm" type="button" data-calif="${i}">★ Calificar</button>`:''}</div></div>`).join('')}</div>`;
+    $$('[data-calif]').forEach(b=>b.onclick=()=>abrirCalificar(lista[+b.dataset.calif],()=>abrirCuenta()));
     $$('[data-ver]').forEach(b=>b.onclick=()=>abrirSeguimiento(lista[+b.dataset.ver].pedido_id, lista[+b.dataset.ver]));
     $$('[data-repetir]').forEach(b=>b.onclick=()=>repetir(lista[+b.dataset.repetir]));
   }catch(e){ const cont=$('#m-lista'); if(cont) cont.innerHTML=`<p class="err">${esc(e.message)}</p>`; }
@@ -1023,7 +1041,8 @@ function abrirSeguimiento(id, inicial){
         <p class="nota">Indica <b>pedido #${esc(p.numero)}</b> en el comentario de la transferencia. El local prepara tu pedido cuando la recibe.</p>`:''}
       ${malo?`<div class="cerrado-aviso">Tu pedido fue ${p.estado==='RECHAZADO'?'rechazado por el local':'cancelado'}.${p.motivo_rechazo?' Motivo: '+esc(p.motivo_rechazo)+'.':''} Si tienes dudas, escríbele al local por WhatsApp.</div>`
       :`<ol class="pasos">${pasosDe(p).map((x,i)=>`<li class="${i<k||(fin&&i<=k)?'hecho':i===Math.ceil(k)?'actual':''}"><span class="p">${i<k||(fin&&i<=k)?'✓':i+1}</span><div><b>${x[1]}</b><small>${p.estado==='LISTO'&&p.tipo_entrega==='DELIVERY'&&i===2?'Tu pedido está listo y sale pronto':x[2]}</small></div></li>`).join('')}</ol>`}
-      ${p.repartidor&&p.estado==='EN_CAMINO'?`<div class="repa"><div class="av">${esc((p.repartidor.nombre||'?')[0])}</div><div><b>${esc(p.repartidor.nombre)} te lo lleva</b><small style="color:var(--txt2)">${esc([p.repartidor.vehiculo,p.repartidor.color,p.repartidor.patente?'patente '+p.repartidor.patente:''].filter(Boolean).join(' · '))}</small></div></div>`:''}
+      ${p.repartidor&&p.estado==='EN_CAMINO'?bloqueRepartidor(p):''}
+      ${p.calificar?`<button class="btn" type="button" id="s-calificar" style="width:100%;margin-top:12px">★ Califica tu pedido</button>`:p.calificado?'<p class="nota" style="text-align:center">¡Gracias por calificar tu pedido!</p>':''}
       <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700">Detalle del pedido</summary>
         ${p.items.map(x=>`<div class="tot"><span>${x.cantidad} × ${esc(x.nombre)}${x.variante?' ('+esc(x.variante)+')':''}</span><span class="num">${pesos(x.subtotal)}</span></div>`).join('')}
         ${p.tipo_entrega==='DELIVERY'?`<div class="tot"><span>Despacho</span><span class="num">${p.costo_despacho==null?'A confirmar':pesos(p.costo_despacho)}</span></div><p class="nota">${esc(p.direccion)}</p>`:''}
@@ -1031,6 +1050,8 @@ function abrirSeguimiento(id, inicial){
       ${fin?'':'<p class="nota">Esta pantalla se actualiza sola cada 30 segundos.</p>'}`,
       `<button class="btn" type="button" data-cerrar>Seguir mirando la carta</button>`);
     alCerrar=()=>{ clearInterval(TIMER); revisarPedidoEnCurso(); };
+    if(p.repartidor&&p.repartidor.ubicacion&&p.estado==='EN_CAMINO') pintarMapa(p);
+    const sc=$('#s-calificar'); if(sc) sc.onclick=()=>abrirCalificar(p,()=>abrirSeguimiento(p.pedido_id));
     const cp=$('#s-copiar'); if(cp&&t) cp.onclick=()=>{
       const txt=`${t.titular}\nRUT ${t.rut}\n${t.banco}\n${t.tipo_cuenta}\n${t.numero_cuenta}${t.email?'\n'+t.email:''}\nMonto ${pesos(p.total)}\nPedido #${p.numero}`;
       (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>aviso('Datos copiados')).catch(()=>aviso('No se pudo copiar. Selecciona el texto.',true));
@@ -1045,6 +1066,67 @@ function abrirSeguimiento(id, inicial){
   if(inicial) pintar(inicial); else hoja('Tu pedido','<div class="spin"></div>');
   if(!inicial) traer();
   TIMER=setInterval(traer, 30000);
+}
+/* ---------- Repartidor y mapa ---------- */
+function kmEntre(a,b){ const R=6371,t=x=>x*Math.PI/180; const dl=t(b.lat-a.lat),dg=t(b.lng-a.lng); const h=Math.sin(dl/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dg/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
+function bloqueRepartidor(p){
+  const r=p.repartidor, c=r.calificacion, u=r.ubicacion;
+  const nota=c?(c.nuevo?'<span class="chip-n">Nuevo</span>':`<span class="chip-n">★ ${String(c.promedio).replace('.',',')}</span>`):'';
+  let lejos='';
+  if(u&&p.destino){ const d=kmEntre(u,p.destino); const min=Math.max(2,Math.round(d/20*60)+2);
+    lejos=`<p class="nota" style="margin-top:8px">${d<0.15?'Tu repartidor está llegando.':`Está a ${d<1?Math.round(d*1000)+' m':d.toFixed(1).replace('.',',')+' km'} de tu domicilio, unos ${min} minutos.`} Ubicación de ${u.hace_min<1?'hace menos de un minuto':'hace '+u.hace_min+' min'}.</p>`; }
+  return `<div class="repa"><div class="av">${esc((r.nombre||'?')[0])}</div><div><b>${esc(r.nombre)} te lo lleva ${nota}</b><small style="color:var(--txt2)">${esc([r.vehiculo,r.color,r.patente?'patente '+r.patente:''].filter(Boolean).join(' · '))}</small></div></div>
+    ${u?'<div class="mapa" id="mapa" aria-label="Mapa con la ubicación del repartidor"></div>'+lejos:'<p class="nota">Cuando el repartidor active su ubicación, la verás aquí en un mapa.</p>'}`;
+}
+let LEAFLET=null;
+function cargarLeaflet(){
+  if(window.L) return Promise.resolve();
+  if(LEAFLET) return LEAFLET;
+  LEAFLET=new Promise((ok,mal)=>{
+    const css=document.createElement('link'); css.rel='stylesheet'; css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(css);
+    const js=document.createElement('script'); js.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; js.onload=ok; js.onerror=()=>{ LEAFLET=null; mal(); }; document.head.appendChild(js);
+  });
+  return LEAFLET;
+}
+async function pintarMapa(p){
+  try{ await cargarLeaflet(); }catch(e){ const m=$('#mapa'); if(m) m.remove(); return; }
+  const div=$('#mapa'); if(!div||div.dataset.listo) return; div.dataset.listo='1';
+  const u=p.repartidor.ubicacion, d=p.destino;
+  const mapa=L.map(div,{zoomControl:false,attributionControl:true});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(mapa);
+  const pin=(color,txt)=>L.divIcon({className:'',html:`<div style="width:34px;height:34px;border-radius:50%;background:${color};color:#fff;display:grid;place-items:center;font-weight:800;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35);font-size:15px">${txt}</div>`,iconSize:[34,34],iconAnchor:[17,17]});
+  const mr=L.marker([u.lat,u.lng],{icon:pin('#E53935',esc((p.repartidor.nombre||'R')[0]))}).addTo(mapa);
+  if(d){ L.marker([d.lat,d.lng],{icon:pin('#1B1B1B','⌂')}).addTo(mapa); mapa.fitBounds(L.latLngBounds([[u.lat,u.lng],[d.lat,d.lng]]),{padding:[36,36],maxZoom:16}); }
+  else mapa.setView([u.lat,u.lng],15);
+}
+
+/* ---------- Calificar ---------- */
+function bloqueCalificar(clave,titulo,etiquetas){
+  return `<div class="calif" data-calif="${clave}"><b>${titulo}</b>
+    <div class="estrellas">${[1,2,3,4,5].map(n=>`<button type="button" data-n="${n}" aria-label="${n} estrellas">★</button>`).join('')}</div>
+    <div class="etqs">${etiquetas.map(t=>`<button type="button">${esc(t)}</button>`).join('')}</div></div>`;
+}
+function abrirCalificar(p,volver){
+  const c=p.calificar; if(!c) return;
+  hoja(`Califica tu pedido #${p.numero}`, `<p class="nota" style="margin:0 0 12px">Te toma 10 segundos y ayuda a ${esc(NEG.nombre)} a mejorar. En su web se muestra solo el promedio.</p>
+    ${c.negocio?bloqueCalificar('negocio','¿Qué te pareció '+esc(NEG.nombre)+'?',c.etiquetas_negocio):''}
+    ${c.repartidor?bloqueCalificar('repartidor','¿Y la entrega'+(p.repartidor?' de '+esc(p.repartidor.nombre):'')+'?',c.etiquetas_repartidor):''}
+    <label class="f">Comentario (opcional)<textarea id="k-com" rows="2" maxlength="300" placeholder="Cuéntanos algo más"></textarea></label>
+    <div id="k-err"></div>`,
+    `<button class="btn sec2" type="button" id="k-volver">Volver</button><button class="btn" type="button" id="k-ok">Enviar calificación</button>`);
+  $$('.calif').forEach(bl=>{
+    bl.querySelector('.estrellas').onclick=e=>{ const b=e.target.closest('[data-n]'); if(!b) return; const n=+b.dataset.n; bl.querySelectorAll('.estrellas button').forEach(x=>x.classList.toggle('on',+x.dataset.n<=n)); };
+    bl.querySelector('.etqs').onclick=e=>{ const b=e.target.closest('button'); if(b) b.classList.toggle('on'); };
+  });
+  $('#k-volver').onclick=volver;
+  $('#k-ok').onclick=async()=>{
+    const datos={}; let falta=false;
+    $$('.calif').forEach(bl=>{ const n=bl.querySelectorAll('.estrellas button.on').length; if(!n){ falta=true; return; }
+      datos[bl.dataset.calif]={estrellas:n,etiquetas:[...bl.querySelectorAll('.etqs button.on')].map(b=>b.textContent),comentario:$('#k-com').value.trim()}; });
+    if(falta){ errorEn('#k-err','Elige las estrellas.'); return; }
+    try{ await ocupado('#k-ok','Enviando…',()=>PP_API.webCalificar(p.pedido_id,datos)); aviso('¡Gracias por calificar!'); volver(); }
+    catch(e){ errorEn('#k-err',e.message); }
+  };
 }
 async function revisarPedidoEnCurso(){
   const cont=$('#en-curso'); cont.innerHTML='';
