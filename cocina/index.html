@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  PrestoPronto, versión 1.4
+  PrestoPronto, versión 1.5
   Archivo: cocina/index.html (pantalla de cocina con PIN; se abre como /cocina/?n=slug-del-negocio)
   Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
 -->
@@ -329,7 +329,7 @@ function pintar(){
   const h=DATOS.negocio.estado_horario||{};
   $('#t-hor').hidden=!h.conocido; $('#t-hor').className='chip '+(h.abierto?'ok':'mal'); $('#t-hor').innerHTML=`<i></i>${h.abierto?'Abierto':'Cerrado'}`;
   $('#t-hoy').textContent=`${DATOS.resumen.pedidos_hoy} pedidos hoy`;
-  $('#l-hist').innerHTML=terminados.length?`<table>${terminados.map(p=>`<tr><td><b>#${esc(p.numero)}</b></td><td>${hhmm(p.fecha_hora)}</td><td>${p.tipo_entrega==='DELIVERY'?'Delivery':'Retiro'}</td><td>${esc(nombreEstado(p.estado))}${p.motivo_rechazo?': '+esc(p.motivo_rechazo):''}</td><td class="n num">${pesos(p.total)}</td></tr>`).join('')}</table>`:'<div class="vacio">Todavía no hay pedidos terminados.</div>';
+  $('#l-hist').innerHTML=terminados.length?`<table>${terminados.map(p=>`<tr><td><b>#${esc(p.numero)}</b></td><td>${hhmm(p.fecha_hora)}</td><td>${p.tipo_entrega==='DELIVERY'?'Delivery':'Retiro'}</td><td>${esc(nombreEstado(p.estado))}${p.motivo_rechazo?': '+esc(p.motivo_rechazo):''}</td><td class="n num">${pesos(p.total)}</td><td class="n">${p.calificar&&(p.calificar.cliente||(p.calificar.repartidor&&puedeCancelar()))?`<button class="b sec" style="padding:6px 10px;font-size:13px" data-calif="${esc(p.pedido_id)}">★ Calificar</button>`:''}</td></tr>`).join('')}</table>`:'<div class="vacio">Todavía no hay pedidos terminados.</div>';
 }
 function nombreEstado(e){ return {RECIBIDO:'Nuevo',EN_PREPARACION:'En preparación',LISTO:'Listo',EN_CAMINO:'En camino',ENTREGADO:'Entregado',RECHAZADO:'Rechazado',CANCELADO:'Cancelado'}[e]||e; }
 const puedeCancelar=()=>PERFIL&&['DUENO','ENCARGADO'].includes(PERFIL.usuario.rol);
@@ -346,7 +346,8 @@ function tarjeta(p,nuevo){
   const espera=p.estado_pago==='PENDIENTE_TRANSFERENCIA';
   const cobrar=['EFECTIVO','TARJETA','TRANSFERENCIA_ENTREGA'].includes(p.medio_pago);
   const pago=`<div class="pago"><span class="t">${esc(p.medio_pago_texto)}</span>${espera?`<span class="badge esp">Esperando transferencia de ${pesos(p.total)}</span>`:p.estado_pago==='PAGADO'?'<span class="badge ok">Pagado</span>':cobrar?`<span>Cobrar <b class="num">${pesos(p.total)}</b>${del&&p.costo_despacho==null?' + despacho':''}</span>`:''}</div>`;
-  const cli=`<div class="dato"><b>${esc(p.cliente.nombre||'Cliente')}</b>${p.cliente.telefono?` · <a href="tel:${esc(p.cliente.telefono)}">${esc(p.cliente.telefono)}</a>`:''}</div>`;
+  const cn=p.cliente.calificacion;
+  const cli=`<div class="dato"><b>${esc(p.cliente.nombre||'Cliente')}</b>${cn?(cn.nuevo?' <span class="badge" style="background:#333">Cliente nuevo</span>':` <span class="badge" style="background:rgba(242,197,0,.2);color:var(--amarillo)">★ ${String(cn.promedio).replace('.',',')}</span>`):''}${p.cliente.telefono?` · <a href="tel:${esc(p.cliente.telefono)}">${esc(p.cliente.telefono)}</a>`:''}</div>`;
   const dir=del&&p.direccion?`<div class="dato">${esc(p.direccion.texto)}${p.direccion.referencia?`<br>Ref.: ${esc(p.direccion.referencia)}`:''}${p.distancia_km!==''&&p.distancia_km!=null?`<br>${String(p.distancia_km).replace('.',',')} km${p.anillo?' · '+esc(p.anillo):''}`:''}</div>`:'';
   let acc='';
   const id=esc(p.pedido_id), est=esc(p.estado);
@@ -362,7 +363,7 @@ function tarjeta(p,nuevo){
   }
   return `<article class="ped${nuevo?' nuevo':''}" data-ped="${id}">
     <div class="ped-h"><span class="nro num">#${esc(p.numero)}</span>${tags}<span class="hora num">${hhmm(p.fecha_hora)}</span>${tiempo}</div>
-    ${items}${p.nota?`<div class="nota">Nota: ${esc(p.nota)}</div>`:''}${cli}${dir}${pago}
+    ${items}${p.nota?`<div class="nota">Nota: ${esc(p.nota)}</div>`:''}${p.nota_reparto&&p.estado==='LISTO'?`<div class="motivo">Volvió del reparto: ${esc(p.nota_reparto)}</div>`:''}${p.estado==='EN_CAMINO'&&p.repartidor?`<div class="dato">Lo lleva <b>${esc(p.repartidor)}</b></div>`:''}${cli}${dir}${pago}
     <div class="acc">${acc}</div></article>`;
 }
 
@@ -410,6 +411,31 @@ function dialogoMotivo(p,estado){
   $('#d-ok').onclick=()=>{
     const m=$('#d-txt').value.trim(); if(m.length<3){ aviso('Escribe el motivo; el cliente lo va a ver.',true); return; }
     ejecutar($('#d-ok'),()=>PP_API.cocinaCambiarEstado(p.pedido_id,estado,p.estado,{motivo:m}),`Pedido #${p.numero} ${rech?'rechazado':'cancelado'}`);
+  };
+}
+
+/* ================= Calificar ================= */
+$('#l-hist').addEventListener('click',e=>{ const b=e.target.closest('[data-calif]'); if(!b) return; const p=DATOS.pedidos.find(x=>x.pedido_id===b.dataset.calif); if(p) dialogoCalificar(p); });
+function bloqueEst(clave,titulo,etqs){
+  return `<div class="calif" data-calif="${clave}" style="margin-top:14px"><b>${titulo}</b>
+    <div class="opciones est" style="margin:8px 0">${[1,2,3,4,5].map(n=>`<button type="button" data-n="${n}">${'★'.repeat(n)}</button>`).join('')}</div>
+    <div class="opciones etq" style="margin:4px 0">${etqs.map(t=>`<button type="button" style="font-size:14px;padding:8px 12px">${esc(t)}</button>`).join('')}</div></div>`;
+}
+function dialogoCalificar(p){
+  const c=p.calificar, rep=c.repartidor&&puedeCancelar();
+  dlg(`<h2>Calificar pedido #${esc(p.numero)}</h2><p>Las personas solo ven su promedio, nunca la nota individual.</p>
+    ${c.cliente?bloqueEst('cliente','Cliente: '+esc(p.cliente.nombre||''),DATOS.etiquetas.cliente):''}
+    ${rep?bloqueEst('repartidor','Repartidor: '+esc(p.repartidor||''),DATOS.etiquetas.repartidor):''}
+    <div class="acc"><button class="b sec" data-cerrar>Volver</button><button class="b pri" id="d-ok">Enviar</button></div>`);
+  $$('.calif').forEach(bl=>{
+    bl.querySelector('.est').onclick=e=>{ const b=e.target.closest('[data-n]'); if(!b) return; bl.querySelectorAll('.est button').forEach(x=>x.classList.toggle('on',x===b)); };
+    bl.querySelector('.etq').onclick=e=>{ const b=e.target.closest('button'); if(b) b.classList.toggle('on'); };
+  });
+  $('#d-ok').onclick=()=>{
+    const datos={};
+    $$('.calif').forEach(bl=>{ const on=bl.querySelector('.est button.on'); if(on) datos[bl.dataset.calif]={estrellas:+on.dataset.n,etiquetas:[...bl.querySelectorAll('.etq button.on')].map(b=>b.textContent)}; });
+    if(!Object.keys(datos).length){ aviso('Elige las estrellas.',true); return; }
+    ejecutar($('#d-ok'),()=>PP_API.cocinaCalificar(p.pedido_id,datos),'Calificación guardada');
   };
 }
 
