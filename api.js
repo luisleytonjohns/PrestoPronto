@@ -1,6 +1,6 @@
 /**
- * PrestoPronto, versión 1.4
- * Archivo: api.js (capa intermedia de comunicación; va en la raíz del sitio, junto a las carpetas consola, sitio, web y cocina)
+ * PrestoPronto, versión 1.5
+ * Archivo: api.js (capa intermedia de comunicación; va en la raíz del sitio, junto a las carpetas consola, sitio, web, cocina y reparto)
  * Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
  *
  * Regla: las pantallas nunca llaman al servidor directamente; todo pasa por este archivo.
@@ -141,6 +141,17 @@ const PP_API = (function () {
     },
     confirmarTransferencia: function (pedidoId) { return llamar('confirmarTransferencia', { pedido_id: pedidoId }); },
 
+    /** calificaciones: { cliente: {estrellas, etiquetas, comentario}, repartidor: {...} } */
+    cocinaCalificar: function (pedidoId, calificaciones) { return llamar('cocinaCalificar', Object.assign({ pedido_id: pedidoId }, calificaciones)); },
+
+    /* ---------- Reparto ---------- */
+    repartoPedidos: function () { return llamar('repartoPedidos'); },
+    repartoTomar: function (pedidoIds) { return llamar('repartoTomar', { pedido_ids: pedidoIds }); },
+    repartoEntregar: function (pedidoId, calificacion) { return llamar('repartoEntregar', { pedido_id: pedidoId, calificacion: calificacion || null }); },
+    repartoNoEntregado: function (pedidoId, motivo) { return llamar('repartoNoEntregado', { pedido_id: pedidoId, motivo: motivo }); },
+    repartoUbicacion: function (lat, lng, precision) { return llamar('repartoUbicacion', { lat: lat, lng: lng, precision: precision }); },
+    repartoCalificar: function (pedidoId, calificacion) { return llamar('repartoCalificar', Object.assign({ pedido_id: pedidoId }, calificacion)); },
+
     /* ---------- Web del negocio (clientes) ---------- */
     obtenerCartaPublica: function (negocio) { return llamar('carta', { negocio: negocio }); },
     webEnviarCodigo: function (negocio, email) { return llamar('webEnviarCodigo', { negocio: negocio, email: email }); },
@@ -161,6 +172,8 @@ const PP_API = (function () {
     webCrearPedido: function (pedido) { return llamar('webCrearPedido', pedido); },
     webPedido: function (pedidoId) { return llamar('webPedido', { pedido_id: pedidoId }); },
     webMisPedidos: function () { return llamar('webMisPedidos'); },
+    /** calificaciones: { negocio: {estrellas, etiquetas, comentario}, repartidor: {...} } */
+    webCalificar: function (pedidoId, calificaciones) { return llamar('webCalificar', Object.assign({ pedido_id: pedidoId }, calificaciones)); },
     webSalir: async function () {
       try { await llamar('webSalir'); } catch (e) { /* igual se borra localmente */ }
       borrarToken();
