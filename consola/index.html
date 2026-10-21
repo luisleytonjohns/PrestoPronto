@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PrestoPronto | Consola</title>
 <!--
-  PrestoPronto, versión 1.4
+  PrestoPronto, versión 1.5
   Archivo: consola/index.html (Consola de la plataforma; usa ../api.js)
   Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
 -->
@@ -241,6 +241,7 @@ function toast(m,err){ const t=$('#toast'); t.textContent=m; t.className=err?'er
 function cargando(on){ $('#cargando').hidden=!on; }
 async function tarea(fn, ok){ cargando(true); try{ const r=await fn(); if(ok) toast(ok); return r; } catch(e){ toast(e.message,true); throw e; } finally{ cargando(false); } }
 function urlSitio(){ return new URL('../sitio/', location.href).href; }
+function urlReparto(slug){ return new URL('../reparto/?n='+encodeURIComponent(slug), location.href).href; }
 function urlCocina(slug){ return new URL('../cocina/?n='+encodeURIComponent(slug), location.href).href; }
 function urlWeb(slug){ return new URL('../web/?n='+encodeURIComponent(slug), location.href).href; }
 function val(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
@@ -263,7 +264,7 @@ function errorEnDialogo(m){ let e=$('#dlg-err'); if(!e){ $('#dlg-b').insertAdjac
 function mostrarAcceso(a){
   const esPin=!!a.pin;
   const msj = esPin
-    ? `Hola ${a.nombre}, tu acceso a PrestoPronto (${ROLES[a.rol]}):\n${a.rol==='COCINA'?'Ingresa en '+urlCocina(a.negocio)+'\n':''}Negocio: ${a.negocio}\nPIN: ${a.pin}\nNo lo compartas con nadie.`
+    ? `Hola ${a.nombre}, tu acceso a PrestoPronto (${ROLES[a.rol]}):\n${a.rol==='COCINA'?'Ingresa en '+urlCocina(a.negocio)+'\n':a.rol==='REPARTIDOR'?'Ingresa desde tu celular en '+urlReparto(a.negocio)+'\n':''}Negocio: ${a.negocio}\nPIN: ${a.pin}\nNo lo compartas con nadie.`
     : `Hola ${a.nombre}, tu acceso a PrestoPronto:\nIngresa en ${a.rol==='SUPERADMIN'?location.href:urlSitio()}\nCorreo: ${a.email}\nClave temporal: ${a.clave}\nTe pedirá crear tu propia clave al entrar.`;
   return dialogo('Acceso de '+a.nombre, `
     <div class="credencial">${esPin?`PIN de ${esc(ROLES[a.rol])}<br><code>${esc(a.pin)}</code>`:`Correo: <b>${esc(a.email)}</b><br>Clave temporal: <code>${esc(a.clave)}</code>`}</div>
@@ -616,7 +617,7 @@ function subSitio(){
     ${campo('s-dom','Dominio propio (opcional)',n.dominio_propio)}
     <label class="f">Estado del dominio<select id="s-edom">${opciones([['','Sin dominio propio'],['PENDIENTE','Pendiente'],['VERIFICADO','Verificado'],['ACTIVO','Activo']],n.estado_dominio||'')}</select></label></div>
     <p class="muted" style="font-size:13px">La web del negocio está en <a href="${esc(urlWeb(n.slug))}" target="_blank" rel="noopener">${esc(urlWeb(n.slug))}</a>. El dominio propio queda registrado para la migración.</p>
-    <p class="muted" style="font-size:13px">La cocina entra con su PIN en <a href="${esc(urlCocina(n.slug))}" target="_blank" rel="noopener">${esc(urlCocina(n.slug))}</a>.</p></div>
+    <p class="muted" style="font-size:13px">La cocina entra con su PIN en <a href="${esc(urlCocina(n.slug))}" target="_blank" rel="noopener">${esc(urlCocina(n.slug))}</a> y los repartidores en <a href="${esc(urlReparto(n.slug))}" target="_blank" rel="noopener">${esc(urlReparto(n.slug))}</a>.</p></div>
     <div class="panel"><h2>Apariencia</h2><div class="grid g3">
       <label class="f">Plantilla<select id="s-pl">${opciones([['clasica','Clásica'],['vitrina','Vitrina'],['express','Express']],n.plantilla||'clasica')}</select></label>
       <label class="f">Modo<select id="s-modo">${opciones([['claro','Claro'],['oscuro','Oscuro']],n.modo||'claro')}</select></label>
