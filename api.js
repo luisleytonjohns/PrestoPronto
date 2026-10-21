@@ -1,6 +1,6 @@
 /**
- * PrestoPronto, versión 1.3
- * Archivo: api.js (capa intermedia de comunicación; va en la raíz del sitio, junto a las carpetas consola, sitio y web)
+ * PrestoPronto, versión 1.4
+ * Archivo: api.js (capa intermedia de comunicación; va en la raíz del sitio, junto a las carpetas consola, sitio, web y cocina)
  * Autor: Luis Leyton-Johns | ORCID 0000-0002-4462-403X | linkedin.com/in/luis-leyton-johns
  *
  * Regla: las pantallas nunca llaman al servidor directamente; todo pasa por este archivo.
@@ -132,6 +132,14 @@ const PP_API = (function () {
       escribir('localStorage', 'pp_soporte_pendiente', r.token);
       return r.negocio;
     },
+
+    /* ---------- Cocina ---------- */
+    cocinaPedidos: function () { return llamar('cocinaPedidos'); },
+    /** estado: EN_PREPARACION, LISTO, EN_CAMINO, ENTREGADO, RECHAZADO o CANCELADO; desde: estado que ve la pantalla */
+    cocinaCambiarEstado: function (pedidoId, estado, desde, extra) {
+      return llamar('cocinaCambiarEstado', Object.assign({ pedido_id: pedidoId, estado: estado, desde: desde }, extra || {}));
+    },
+    confirmarTransferencia: function (pedidoId) { return llamar('confirmarTransferencia', { pedido_id: pedidoId }); },
 
     /* ---------- Web del negocio (clientes) ---------- */
     obtenerCartaPublica: function (negocio) { return llamar('carta', { negocio: negocio }); },
